@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+input[type='text'],input[type='password'],input[type='email']{
+    @apply w-full border my-2 py-2 px-3 rounded-2xl;
+}
+button{
+    @apply bg-gray-300 w-full
+}
+button.primary{
+    background-color: '#1C386E';
+    @apply bg-primary p-2 w-full text-white rounded-2xl 
+}
+
+body{background: #f1f1f1;}
+.main .sidebar .sidebarWrapper{height : 100vh}
+.main .sidebar .sidebarWrapper .sidebar{height: 100vh ; background: #fff;}
+
+.toast-custom {
+    color: black;
+    font-size: 14px; 
+    border-radius: 5px;
+    padding: 10px 12px; 
+    border: 1px solid #f5c6cb;
+    display: flex;
+    align-items: center; 
+    justify-content: space-between; 
+    width: auto;
+    max-width: 300px;
+    white-space: normal;
+    box-sizing: border-box;
+}
+
+.toast-success.toast-custom {
+    border-color: #c3e6cb;
+    background-color: #d4edda; 
+}
+
+.toast-error.toast-custom {
+    border-color: #f5c6cb; 
+    background-color: #f8d7da; 
+}
+
+.toast-custom .Toastify__close-button {
+    color: black;
+    cursor: pointer;
+    margin-left: 8px; 
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    background: none;
+    border: none;
+    padding: 0;
+    height: 20px;
+    width: 20px; 
+    line-height: normal; 
+}
+
+.toast-custom p {
+    margin: 0;
+    padding: 0;
+    line-height: 1.5; 
+    flex-grow: 1;
+    white-space: normal; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
