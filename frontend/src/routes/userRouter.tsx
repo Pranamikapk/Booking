@@ -10,6 +10,7 @@ import HotelDetails from '../pages/User/HotelDetails'
 import Login from '../pages/User/Login'
 import Register from '../pages/User/Register'
 import Search from '../pages/User/Search'
+import Booking from '../pages/User/Booking'
 
 const UserRouter = () => {
   const { user } = useSelector((state: any) => state.auth || localStorage.getItem('user'));
@@ -25,8 +26,9 @@ const UserRouter = () => {
           <Route path="/resetPassword" element={<ResetPassword />} />
           <Route path="/hotel/:hotelId" element={<HotelDetails />} />
           <Route path="/search" element={<Search />} />
-
+          <Route path="/booking" element={<Booking />} />
         </Route>
+
         <Route path='/manager/login' element={<ManagerLogin/>}/>
 
       </Routes>

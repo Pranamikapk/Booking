@@ -37,7 +37,7 @@ const Photo: React.FC<PhotoProps> = ({ formData, handleChange, nextStep, prevSte
         const files = e.target.files;
     
         if (files) {
-            setLoading(true);  // start loading
+            setLoading(true);  
             const filesArray = Array.from(files);
     
             const uploadPromises = filesArray.map(async (file) => {

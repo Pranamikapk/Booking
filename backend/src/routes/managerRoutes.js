@@ -31,8 +31,8 @@ managerRouter.post(
 managerRouter.post("/login", managerController.login);
 managerRouter.put("/account", protect, managerController.updateProfile);
 managerRouter.post("/api/auth/google-login", userController.googleLogin);
-managerRouter.post("/resendOtp", userController.resendOtp);
-managerRouter.post("/verifyOtp", userController.verifyOtp);
+managerRouter.post("/resendOtp", managerController.resendOtp);
+managerRouter.post("/verifyOtp", managerController.verifyOtp);
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

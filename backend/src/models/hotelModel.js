@@ -91,6 +91,10 @@ const HotelSchema = new Schema(
       type: Boolean,
       default: true,
     },
+    availability: [{
+      date: { type: Date, required: true },
+      isAvailable: { type: Boolean, default: true },
+    }],
   },
   { timestamps: true }
 );

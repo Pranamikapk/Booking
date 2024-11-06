@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { AppDispatch, RootState } from '../../app/store';
-import Spinner from '../../components/Spinner';
+import Spinner from '../../components/Spinner.js';
 import { logout, updateProfile } from '../../features/user/authSlice';
 
 function Account() : React.JSX.Element | null{

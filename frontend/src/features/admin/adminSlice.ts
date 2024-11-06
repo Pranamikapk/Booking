@@ -6,8 +6,6 @@ import { Manager } from '../../types/managerTypes';
 import { User } from '../../types/userTypes';
 import adminService from './adminService';
 
-
-
 const safeJSONParse = (item : string | null) : any => {
     try {
       return item ? JSON.parse(item) : null

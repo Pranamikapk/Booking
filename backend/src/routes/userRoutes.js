@@ -30,5 +30,6 @@ userRouter.post("/resetPassword", userController.resetPassword);
 userRouter.get("/hotels", userController.listHotels);
 userRouter.get("/hotel/:hotelId", hotelDetails);
 userRouter.get("/hotel/search", search);
+// userRouter.get("/booking", userController.booking)
 
 export default userRouter;

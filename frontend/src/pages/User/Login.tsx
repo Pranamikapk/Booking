@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { AppDispatch, RootState } from '../../app/store';
 import ForgotPasswordModal from '../../components/modals/ForgotPasswordModal';
-import Spinner from '../../components/Spinner';
+import Spinner from '../../components/Spinner.js';
 import { googleLogin, login, reset } from '../../features/user/authSlice';
 
 interface FormData{

@@ -1,4 +1,6 @@
-import React, { useEffect } from 'react';
+import { addDays } from 'date-fns';
+import React, { useEffect, useState } from 'react';
+import { DateRange } from 'react-day-picker';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { AppDispatch, RootState } from '../../app/store';
@@ -12,8 +14,13 @@ import { fetchHotelById } from '../../features/home/hotels';
 const HotelDetails: React.FC = () => {
   const { hotelId } = useParams<{ hotelId: string }>();
   const dispatch = useDispatch<AppDispatch>();
+  const { hotel, isLoading } = useSelector((state: RootState) => state.hotel);
 
-  const {hotel,isLoading} = useSelector((state: RootState) => state.hotel);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: new Date(),
+    to: addDays(new Date(), 7)
+  });
+  const [guests, setGuests] = useState(1);
 
   useEffect(() => {
     if (hotelId) {
@@ -34,7 +41,6 @@ const HotelDetails: React.FC = () => {
           reviews={hotel.reviews || 0}
           city={hotel.address?.city || 'Unknown Location'}
           state={hotel.address?.state || 'Unknown Location'}
-
         />
       </div>
 
@@ -53,14 +59,16 @@ const HotelDetails: React.FC = () => {
           />
         </div>
 
-        <div className="w-full md:w-1/3">
+        <div className="lg:sticky w-full md:w-1/3">
           <HotelBooking 
             price={hotel.price ?? 0} 
             rating={hotel.rating || 0}
             reviews={hotel.reviews || 0}
-            checkIn="10/25/2024"  
-            checkOut="10/28/2024"
-            guests= {hotel.rooms?.guests || 0} 
+            dateRange={dateRange}
+            setDateRange={setDateRange}
+            guests={guests}
+            setGuests={setGuests}
+            maxGuests={hotel.rooms?.guests || 1}
           />
         </div>
       </div>
