@@ -12,12 +12,14 @@ import { register, reset } from '../../features/user/authSlice'
 interface FormData{
   name : string 
   email : string
+  phone : string
   password: string
 }
 
 interface FormErrors{
   name : string
   email : string
+  phone : string
   password : string
 }
 
@@ -25,16 +27,18 @@ const Register : React.FC = () => {
     const[formData,setFormData] = useState<FormData>({
         name:'',
         email:'',
+        phone:'',
         password:''
     })
 
     const [formErrors, setFormErrors] = useState<FormErrors>({
         name:'',
         email:'',
+        phone:'',
         password:''
     });
 
-    const {name,email,password} = formData
+    const {name,email,phone,password} = formData
     const navigate = useNavigate()
     const dispatch = useDispatch<AppDispatch>()
     const [showOtpModal ,setShowOtpModal] = useState<boolean>(false)
@@ -84,7 +88,7 @@ const Register : React.FC = () => {
     }
 
     const validateFields = (formData : FormData): FormErrors => {
-      let errors : FormErrors = { name : '' , email : '' , password : ''};
+      let errors : FormErrors = { name : '' , email : '', phone : '', password : ''};
       if (!formData.name) {
         errors.name = 'Name is required';
       }
@@ -92,6 +96,11 @@ const Register : React.FC = () => {
         errors.email = 'Email is required';
       } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
         errors.email = 'Email is invalid';
+      }
+      if (!formData.phone) {
+        errors.phone = 'Phone Number is required';
+      }else if(formData.phone.length < 10 && formData.phone.length > 10){
+        errors.phone = 'Phone Number should contain 10 numbers.'
       }
       if (!formData.password) {
         errors.password = 'Password is required';
@@ -109,7 +118,7 @@ const Register : React.FC = () => {
           setFormErrors(errors);
           return;
         } else {
-          setFormErrors({ name: '', email: '', password: '' });
+          setFormErrors({ name: '', email: '',phone: '', password: '' });
         }
         const userData = {
           name,
@@ -263,6 +272,11 @@ const Register : React.FC = () => {
     <div className='min-h-screen flex items-center justify-center bg-gray-100'>
     <div className='bg-white shadow-lg rounded-lg overflow-hidden w-full max-w-md'>
     <div className="p-6 space-y-6">
+    <div className="flex justify-center items-center mb-6">
+          <Link to={'/'} className="flex flex-col items-center">
+            <img src='/images/AddHotel/Untitled design.png' alt="Logo" className="w-24 h-24 rounded-full" /> 
+          </Link>
+        </div>
         <h1 className='text-4xl text-center mb-4'>Register</h1>
         <form className='space-y-6' onSubmit={onSubmit}>
             <input type="text" 
@@ -287,6 +301,17 @@ const Register : React.FC = () => {
               {formErrors.email && (
                 <p className="text-red-500 text-sm mt-1">{formErrors.email}</p>
               )}
+              <input type="tel" 
+              placeholder='phone' 
+              value={phone} 
+              name='phone'
+              onChange={onChange}
+              className={`w-full p-2 border rounded-2xl ${
+                formErrors.phone ? 'border-red-500' : 'border-gray-300'
+              } rounded`}/>
+            {formErrors.phone && (
+              <p className="text-red-500 text-sm mt-1">{formErrors.phone}</p>
+            )}
             <input type="password" 
                 placeholder='password'
                 name='password' 

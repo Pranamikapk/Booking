@@ -1,5 +1,6 @@
 import express from "express";
 import { body } from "express-validator";
+import { createBooking, verifyPayment } from "../controller/bookingController.js";
 import { hotelDetails } from "../controller/hotelController.js";
 import userController, { search } from "../controller/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
@@ -27,9 +28,16 @@ userRouter.post("/verifyOtp", userController.verifyOtp);
 userRouter.post("/forgotPassword", userController.forgotPassword);
 userRouter.post("/resetPassword", userController.resetPassword);
 
+//Hotels
 userRouter.get("/hotels", userController.listHotels);
 userRouter.get("/hotel/:hotelId", hotelDetails);
 userRouter.get("/hotel/search", search);
-// userRouter.get("/booking", userController.booking)
+
+//Booking
+userRouter.post("/booking",protect, createBooking)
+userRouter.post("/verifyPayment", verifyPayment);
+
+
+
 
 export default userRouter;

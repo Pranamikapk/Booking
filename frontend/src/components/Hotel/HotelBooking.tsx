@@ -1,5 +1,5 @@
-import { differenceInDays } from 'date-fns';
-import React from 'react';
+import { differenceInDays, format } from 'date-fns';
+import React, { useState } from 'react';
 import { DateRange, DayPicker } from 'react-day-picker';
 import { useNavigate } from 'react-router-dom';
 import Button from "../../components/ui/Button";
@@ -28,6 +28,7 @@ const HotelBooking: React.FC<HotelBookingProps> = ({
   maxGuests
 }) => {
   const navigate = useNavigate();
+  const [includeCleaning, setIncludeCleaning] = useState(false); // Track if cleaning fee is included
 
   const numberOfNights = dateRange?.from && dateRange?.to 
     ? differenceInDays(dateRange.to, dateRange.from) 
@@ -36,7 +37,7 @@ const HotelBooking: React.FC<HotelBookingProps> = ({
   const subtotal = price * numberOfNights;
   const cleaningFee = 2730;
   const serviceFee = Math.round(subtotal * 0.15);
-  const total = subtotal + cleaningFee + serviceFee;
+  const total = subtotal + serviceFee + (includeCleaning ? cleaningFee : 0);
 
   const handleReserve = () => {
     if (dateRange?.from && dateRange?.to && guests > 0) {
@@ -48,7 +49,7 @@ const HotelBooking: React.FC<HotelBookingProps> = ({
           price,
           numberOfNights,
           subtotal,
-          cleaningFee,
+          cleaningFee: includeCleaning ? cleaningFee : 0,
           serviceFee,
           total
         } 
@@ -59,41 +60,44 @@ const HotelBooking: React.FC<HotelBookingProps> = ({
   };
 
   return (
-    <Card>
+    <Card className="max-w-md mx-auto">
       <CardContent className="p-6">
-        <div className="flex justify-between items-start mb-4">
+        <div className="flex justify-between items-start mb-6">
           <div>
-            <span className="text-2xl font-bold text-gray-800">₹{price}</span>
+            <span className="text-2xl font-bold text-gray-800">₹{price.toLocaleString()}</span>
             <span className="text-gray-500"> night</span>
           </div>
           <div className="flex items-center">
-            <span className="text-sm text-gray-600">{rating} · {reviews} reviews</span>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500 mr-1" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 000-.364-1.118"></path>
+            </svg>
+            <span className="text-sm font-semibold text-gray-700">{rating}</span>
+            <span className="mx-1 text-gray-400">·</span>
+            <span className="text-sm text-gray-600">{reviews} reviews</span>
           </div>
         </div>
-        <div className="mb-6">
+        <div className="mb-6 flex justify-center">
           <DayPicker
             mode="range"
             selected={dateRange}
             onSelect={setDateRange}
-            numberOfMonths={2}
+            numberOfMonths={1}
             className="border rounded-lg shadow-md p-4"
             classNames={{
-              months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+              months: "flex flex-col space-y-4 relative", 
               month: "space-y-4",
-              caption: "flex justify-center relative items-center",
-              caption_label: "text-sm font-medium",
-              nav: "space-x-1 flex items-center",
-              nav_button: "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
-              nav_button_previous: "absolute left-1",
-              nav_button_next: "absolute right-1",
-              table: "w-full border-collapse space-y-1",
+              caption: "flex justify-center relative items-center", 
+              caption_label: "text-lg font-medium", 
+              nav: "flex justify-between items-center w-full mb-4 relative",
+              nav_button: "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",  
+              nav_button_previous: "absolute left-2",  
+              nav_button_next: "absolute right-0",   
+              table: "w-full border-collapse space-y-1 bg-transparent",  
               head_row: "flex",
-              head_cell: "text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]",
+              head_cell: "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]",
               row: "flex w-full mt-2",
               cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-              day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100",
-              day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-              day_today: "bg-accent text-accent-foreground",
+              day: "h-9 w-9 p-0 font-normal aria-selected:opacity-100",
               day_outside: "text-muted-foreground opacity-50",
               day_disabled: "text-muted-foreground opacity-50",
               day_range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground",
@@ -101,50 +105,96 @@ const HotelBooking: React.FC<HotelBookingProps> = ({
             }}
             modifiersStyles={{
               today: { 
-                border: '2px solid #4A90E2',
                 fontWeight: 'bold',
+                color: 'black',
+                borderRadius: '0%',
+                boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)', 
               },
-              checkout: {
-                backgroundColor: '#4A90E2',
+              selected: {
+                color: 'white',
+                border: '2px solid #000000',
+                borderRadius: '50%', 
+                fontWeight: 'bold',  
+              },
+              selectedRange: {   
                 color: 'white',
                 borderRadius: '50%',
               },
             }}
+            disabled={{ before: new Date() }}
+            footer={
+              dateRange?.from && dateRange?.to && (
+                <p className="text-sm text-center mt-4">
+                  {format(dateRange.from, 'PPP')} - {format(dateRange.to, 'PPP')}
+                </p>
+              )
+            }
           />
         </div>
+        <div className="mb-6">
+          <label htmlFor="guests" className="block text-sm font-medium text-gray-700 mb-2">Guests</label>
+          <div className="flex items-center border rounded-md">
+            <button 
+              className="px-3 py-2 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-l-md"
+              onClick={() => setGuests(prev => Math.max(1, prev - 1))}
+            >
+              -
+            </button>
+            <input
+              type="text"
+              id="guests"
+              name="guests"
+              value={guests}
+              className="w-full text-center border-none "
+            />
+            <button 
+              className="px-3 py-2 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-r-md"
+              onClick={() => setGuests(prev => Math.min(maxGuests, prev + 1))}
+            >
+              +
+            </button>
+          </div>
+        </div>
+
         <div className="mb-4">
-          <label htmlFor="guests" className="block text-sm font-medium text-gray-700">Guests</label>
-          <input
-            type="number"
-            id="guests"
-            name="guests"
-            min="1"
-            max={maxGuests}
-            value={guests}
-            onChange={(e) => setGuests(Number(e.target.value))}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-          />
+          <label className="flex items-center">
+            <input 
+              type="checkbox" 
+              checked={includeCleaning} 
+              onChange={() => setIncludeCleaning(!includeCleaning)} 
+              className="mr-2"
+            />
+            Include cleaning fee (₹{cleaningFee.toLocaleString()})
+          </label>
         </div>
-        <Button className="w-full mb-4 bg-indigo-600 text-white hover:bg-indigo-700 transition duration-200" onClick={handleReserve}>Reserve</Button>
-        <p className="text-center text-gray-500 mb-4">You won't be charged yet</p>
-        <div className="space-y-2">
-          <div className="flex justify-between text-gray-800">
-            <span>₹{price} x {numberOfNights} nights</span>
-            <span>₹{subtotal}</span>
+
+        <Button 
+          className="w-full mb-4 bg-[#FF385C] hover:bg-[#FF385C]/90 text-white py-3 rounded-lg font-semibold transition duration-200" 
+          onClick={handleReserve}
+        >
+          Reserve
+        </Button>
+        <p className="text-center text-gray-500 mb-6">You won't be charged yet</p>
+        <div className="space-y-4">
+          <div className="flex justify-between text-gray-700">
+            <span>₹{price.toLocaleString()} x {numberOfNights} nights</span>
+            <span>₹{subtotal.toLocaleString()}</span>
           </div>
-          <div className="flex justify-between text-gray-800">
-            <span>Cleaning fee</span>
-            <span>₹{cleaningFee}</span>
-          </div>
-          <div className="flex justify-between text-gray-800">
+          {includeCleaning && (
+            <div className="flex justify-between text-gray-700">
+              <span>Cleaning fee</span>
+              <span>₹{cleaningFee.toLocaleString()}</span>
+            </div>
+          )}
+          <div className="flex justify-between text-gray-700">
             <span>Service fee</span>
-            <span>₹{serviceFee}</span>
+            <span>₹{serviceFee.toLocaleString()}</span>
           </div>
-        </div>
-        <hr className="my-4 border-gray-300" />
-        <div className="flex justify-between font-bold text-gray-800">
-          <span>Total before taxes</span>
-          <span>₹{total}</span>
+          <hr />
+          <div className="flex justify-between font-bold text-gray-800">
+            <span>Total</span>
+            <span>₹{total.toLocaleString()}</span>
+          </div>
         </div>
       </CardContent>
     </Card>

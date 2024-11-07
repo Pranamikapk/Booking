@@ -18,7 +18,7 @@ const userRegister = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, password } = req.body;
+    const { name, email,phone, password } = req.body;
     let existingUser = await User.findOne({ email });
 
     if (
@@ -45,6 +45,7 @@ const userRegister = async (req, res) => {
           "OTP sent successfully. Please verify to complete registration.",
         email: existingUser.email,
         name: existingUser.name,
+        phone: existingUser.phone,
         role: "client",
         token: generateToken(existingUser._id, existingUser.role),
       });
@@ -53,6 +54,7 @@ const userRegister = async (req, res) => {
     const pendingUser = new User({
       name,
       email,
+      phone,
       password: hashedPassword,
       otp,
       role: "client",
@@ -66,6 +68,7 @@ const userRegister = async (req, res) => {
       message: "OTP sent successfully. Please verify to complete registration.",
       name: pendingUser.name,
       email: pendingUser.email,
+      phone: pendingUser.phone,
       role: pendingUser.role,
       token: generateToken(pendingUser._id, pendingUser.role),
     });
@@ -168,7 +171,7 @@ const userLogin = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     console.log("Updating user:", req.user);
-    const { name, email } = req.body;
+    const { name, email ,phone} = req.body;
     const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(400).json({ message: "User not found" });
@@ -176,6 +179,8 @@ const updateUser = async (req, res) => {
 
     user.name = name || user.name;
     user.email = email || user.email;
+    user.phone = phone || user.phone;
+
 
     const updatedUser = await user.save();
 
@@ -183,6 +188,7 @@ const updateUser = async (req, res) => {
       id: updatedUser._id,
       name: updatedUser.name,
       email: updatedUser.email,
+      phone: updatedUser.phone,
       token: generateToken(updatedUser._id, updateUser.role),
     });
   } catch (error) {

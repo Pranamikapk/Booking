@@ -31,6 +31,15 @@ const BookingSchema = new Schema(
       required: true,
       min: 0,
     },
+    totalDays: {
+      type: Number,
+      required: true,
+      min:1,
+    },
+    transactionId: {
+      type: String,
+      required: true
+    },
     status: {
       type: String,
       enum: ["pending", "cancelled", "completed"],
@@ -54,7 +63,7 @@ const BookingSchema = new Schema(
         enum: ["Aadhar", "Passport", "Driving License"],
         required: true,
       },
-      idNumber: {
+      idPhoto: {
         type: String,
         required: true,
       },

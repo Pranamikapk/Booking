@@ -32,7 +32,7 @@ const googleAuth = async (userData: string | null): Promise<User> => {
   return user;
 };
 
-const updateUserProfile = async (updatedUserData: { name: string; email: string }, token: string): Promise<User> => {
+const updateUserProfile = async (updatedUserData: { name: string; email: string ; phone: string}, token: string): Promise<User> => {
   const response = await axios.put(`${API_URL}user`, updatedUserData, authHeaders(token));
   localStorage.setItem('user', JSON.stringify(response.data));
   return response.data;
@@ -100,7 +100,7 @@ export const googleLogin = createAsyncThunk<User, string, { rejectValue: string 
   }
 );
 
-export const updateProfile = createAsyncThunk<User, { name: string; email: string }, { state: RootState; rejectValue: string }>(
+export const updateProfile = createAsyncThunk<User, { name: string; email: string ; phone: string}, { state: RootState; rejectValue: string }>(
   'auth/updateProfile',
   async (updatedUserData, thunkAPI) => {
     const token = thunkAPI.getState().auth.user?.token;
@@ -130,7 +130,6 @@ export const logout = createAsyncThunk('auth/logout', async () => {
   authService.logoutUser();
 });
 
-// Auth Slice
 export const authSlice = createSlice({
   name: 'auth',
   initialState,

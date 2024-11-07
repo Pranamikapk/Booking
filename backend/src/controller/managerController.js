@@ -159,7 +159,6 @@ const login = async (req, res) => {
   }
 };
 
-// Update manager profile
 const updateProfile = async (req, res) => {
   try {
     const { name, email, phone, licence } = req.body;

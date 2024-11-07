@@ -7,47 +7,34 @@ import User from '../models/userModel.js';
 
 const keyCache = new NodeCache({ stdTTL: 3600 });
 
-export const protect = asyncHandler(async (req, res, next) => {
+export const protect = async (req, res, next) => {
   let token;
 
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    token = req.headers.authorization.split(' ')[1];
-    console.log("Token received:", token);
+  if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith('Bearer')
+  ) {
+      try {
+          token = req.headers.authorization.split(' ')[1];
+          console.log('Token:', token); 
 
-    if (!token) {
-        return res.status(401).json({ message: "Not Authorized, no token" });
-    }
+          const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+          console.log('Decoded User:', decoded); 
 
-    if (token.split('.').length !== 3) {
-        console.log("Invalid token structure:", token.split('.'));
-        return res.status(400).json({ message: "Malformed token" });
-    }
+          req.user = await User.findById(decoded.id).select('-password');
+          console.log('Authenticated User:', req.user);
 
-    try {
-        if (isGoogleToken(token)) {
-            const publicKey = await getGooglePublicKey();
-            const decoded = jwt.verify(token, publicKey, { algorithms: ['RS256'] });
-            console.log("Google token verified:", decoded);
-            req.user = decoded;
-        } else {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY, { algorithms: ['HS256'] });
-            console.log("Normal token verified:", decoded);
-            req.user = await User.findById(decoded.id).select('-password');
-
-            if (!req.user) {
-                throw new Error('User not found');
-            }
-        }
-
-        next();
-    } catch (error) {
-        console.error("Token verification error:", error.message);
-        res.status(401).json({ message: "Not Authorized, token verification failed" });
-    }
-  } else {
-    res.status(401).json({ message: 'Not Authorized, no token' });
+          next();
+      } catch (error) {
+          res.status(401).json({ message: 'Not authorized, token failed' });
+      }
   }
-});
+
+  if (!token) {
+      res.status(401).json({ message: 'Not authorized, no token' });
+  }
+};
+
 
 const isGoogleToken = (token) => {
   const decoded = jwt.decode(token);
