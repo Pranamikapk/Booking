@@ -1,13 +1,8 @@
-import { Cloudinary } from 'cloudinary-core';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../../app/store';
 import { updatePhotos } from '../../../features/hotel/hotelSlice';
 
-const cloudinary = new Cloudinary({ 
-    cloud_name: import.meta.env.VITE_CLOUD_NAME, 
-    secure: true 
-});
 
 interface PhotoProps {
     formData: {
@@ -25,7 +20,7 @@ const Photo: React.FC<PhotoProps> = ({ formData, handleChange, nextStep, prevSte
     const [hotelName, setHotelName] = useState<string>(formData?.name || '');
     const [description, setDescription] = useState<string>(formData?.description || '');
     const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(false);  // loading state
+    const [loading, setLoading] = useState<boolean>(false);  
 
     const dispatch = useDispatch<AppDispatch>();
 
@@ -63,7 +58,7 @@ const Photo: React.FC<PhotoProps> = ({ formData, handleChange, nextStep, prevSte
     
             setPhoto((prevPhotos) => [...prevPhotos, ...validPhotos]);
             dispatch(updatePhotos(validPhotos));
-            setLoading(false);  // stop loading
+            setLoading(false);  
         }
     };
 

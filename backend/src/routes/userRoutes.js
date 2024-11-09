@@ -1,6 +1,6 @@
 import express from "express";
 import { body } from "express-validator";
-import { createBooking, verifyPayment } from "../controller/bookingController.js";
+import { bookingDetails, createBooking, listBookings, verifyPayment } from "../controller/bookingController.js";
 import { hotelDetails } from "../controller/hotelController.js";
 import userController, { search } from "../controller/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
@@ -36,6 +36,10 @@ userRouter.get("/hotel/search", search);
 //Booking
 userRouter.post("/booking",protect, createBooking)
 userRouter.post("/verifyPayment", verifyPayment);
+userRouter.get("/listBookings",listBookings)
+userRouter.get("/booking/:bookingId",bookingDetails)
+
+
 
 
 

@@ -1,7 +1,9 @@
 import crypto from 'crypto';
+import mongoose from 'mongoose';
 import Razorpay from 'razorpay';
 import { v4 as uuidv4 } from 'uuid';
 import Booking from '../models/bookingModel.js';
+
 
 const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
@@ -16,9 +18,13 @@ export async function createBooking(req, res) {
             checkOutDate,
             guests,
             totalPrice,
+            idType,
+            idPhoto,
+            idPhotoBack,
+            paymentOption
         } = req.body;
 
-        const user = req.user; 
+        const user = req.user;
         console.log("user:", user);
 
         if (!user) {
@@ -26,17 +32,35 @@ export async function createBooking(req, res) {
         }
 
         const { _id: userId, name, email, phone } = user;
+
         const checkIn = new Date(checkInDate);
         const checkOut = new Date(checkOutDate);
+
+        if (isNaN(checkIn.getTime()) || isNaN(checkOut.getTime())) {
+            return res.status(400).json({ message: 'Invalid check-in or check-out date' });
+        }
+
         const totalDays = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+
+        if (isNaN(totalDays) || totalDays <= 0) {
+            return res.status(400).json({ message: 'Invalid date range' });
+        }
+
+        if (!idPhoto) {
+            return res.status(400).json({ message: 'ID photo is required' });
+        }
 
         const userCredentials = {
             name,
             email,
             phone,
-            idType: 'Aadhar', 
-            idPhoto
+            idType: idType || 'Aadhar',
+            idPhoto,
+            idPhotoBack
         };
+
+        const amountPaid = paymentOption === 'partial' ? totalPrice * 0.2 : totalPrice;
+        const remainingAmount = totalPrice - amountPaid;
 
         const newBooking = new Booking({
             user: userId,
@@ -49,12 +73,15 @@ export async function createBooking(req, res) {
             transactionId: uuidv4(),
             status: 'pending',
             userCredentials,
+            amountPaid, 
+            remainingAmount
         });
 
         const savedBooking = await newBooking.save();
 
+
         const options = {
-            amount: totalPrice * 100, 
+            amount: amountPaid * 100,
             currency: 'INR',
             receipt: savedBooking._id.toString(),
         };
@@ -64,13 +91,14 @@ export async function createBooking(req, res) {
         res.status(200).json({
             booking: savedBooking,
             orderId: order.id,
+            amountPaid,
+            remainingAmount 
         });
     } catch (error) {
         console.error('Error creating booking:', error);
-        res.status(500).json({ message: 'Error creating booking', error });
+        res.status(500).json({ message: 'Error creating booking', error: error.message });
     }
-}
-
+}   
 
 export async function verifyPayment(req, res) {
     try {
@@ -104,5 +132,43 @@ export async function verifyPayment(req, res) {
     } catch (error) {
         console.error('Error verifying payment:', error);
         res.status(500).json({ message: 'Failed to verify payment', error });
+    }
+}
+
+
+export async function listBookings(req,res){
+    console.log('Inside');
+    try {
+        const bookings = await Booking.find({}).populate('hotel'); 
+        console.log(bookings);        
+        res.status(200).json(bookings);
+        } catch (error) {
+        console.error("Error fetching bookings:", error);
+        res.status(500).json({ message: 'Error fetching bookings' })
+    }
+}
+
+export async function bookingDetails(req,res) {
+    console.log('params: ',req.params.bookingId);
+    
+    const  bookingId  = req.params.bookingId
+
+    try {
+        console.log("bookingId",bookingId);
+
+        if (!mongoose.Types.ObjectId.isValid(bookingId)) {
+            return res.status(404).json({ message: "Invalid booking ID format" });
+        }
+        
+        const booking = await Booking.findById(bookingId).populate('hotel')
+        console.log('booking',booking);
+        
+        if(!booking){
+            return res.status(400).json({message: "Booking not found"})
+        }
+        res.status(200).json(booking)
+    } catch (error) {
+        console.error("Error fetching booking details:", error);
+        res.status(500).json({ message: 'Error fetching booking details' })
     }
 }

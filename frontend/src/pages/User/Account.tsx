@@ -8,6 +8,7 @@ import { toast } from 'react-toastify'
 import { AppDispatch, RootState } from '../../app/store'
 import Spinner from '../../components/Spinner'
 import { logout, updateProfile } from '../../features/user/authSlice'
+import BookingsPage from './BookingsPage'
 
 export default function Account(): React.JSX.Element | null {
   const { user, isLoading, isSuccess, isError, message } = useSelector((state: RootState) => state.auth)
@@ -96,9 +97,6 @@ export default function Account(): React.JSX.Element | null {
         </Link>
         <Link className={linkClasses('bookings')} to={'/user/bookings'}>
           My Bookings
-        </Link>
-        <Link className={linkClasses('places')} to={'/user/places'}>
-          My Accommodations
         </Link>
       </nav>
       <div>
@@ -212,6 +210,9 @@ export default function Account(): React.JSX.Element | null {
               </div>
             </div>
           </div>
+        )}
+        {subpage === 'bookings' && (
+          <BookingsPage />
         )}
       </div>
     </div>

@@ -1,3 +1,4 @@
+import { HotelFormState } from "./hotelTypes";
 import { UserCredentials } from "./userTypes";
 
 export interface BookingData {
@@ -7,10 +8,14 @@ export interface BookingData {
     checkOutDate: string;
     guests: number;
     totalPrice: number;
-    userCredentials: UserCredentials;
-}
+    userCredentials: UserCredentials;}
   
 export interface Booking extends BookingData {
+    totalDays: number;
+    transactionId: string;
+    amountPaid: number;
+    remainingAmount: number;
     _id: string;
     status: string;
+    hotel: HotelFormState
   }

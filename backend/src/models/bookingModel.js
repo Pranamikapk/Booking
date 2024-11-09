@@ -45,6 +45,16 @@ const BookingSchema = new Schema(
       enum: ["pending", "cancelled", "completed"],
       default: "pending",
     },
+    amountPaid: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    remainingAmount: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
     userCredentials: {
       name: {
         type: String,

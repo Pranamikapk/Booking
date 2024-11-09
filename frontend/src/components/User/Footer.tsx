@@ -11,7 +11,7 @@ const Footer : React.FC = () => {
       <div className='w-full max-w-screen-xl mx-auto flex justify-between items-center px-4'>
         <div className="flex justify-center items-center ">
           <Link to={'/'} className="flex flex-col items-center">
-            <img src='/images/AddHotel/Untitled design.png' alt="Logo" className="w-16 h-18 rounded-full" /> 
+            <img src='/images/AddHotel/StayEasy__3_-removebg-preview.png' alt="Logo" className="w-24 h-18 rounded-full" /> 
           </Link>
         </div>       
          <span className='text-white font-bold tracking-tight flex gap-4'>

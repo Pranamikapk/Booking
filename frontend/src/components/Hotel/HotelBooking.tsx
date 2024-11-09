@@ -28,7 +28,7 @@ const HotelBooking: React.FC<HotelBookingProps> = ({
   maxGuests
 }) => {
   const navigate = useNavigate();
-  const [includeCleaning, setIncludeCleaning] = useState(false); // Track if cleaning fee is included
+  const [includeCleaning, setIncludeCleaning] = useState(false); 
 
   const numberOfNights = dateRange?.from && dateRange?.to 
     ? differenceInDays(dateRange.to, dateRange.from) 

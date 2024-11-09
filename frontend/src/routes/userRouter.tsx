@@ -5,12 +5,13 @@ import ResetPassword from '../components/modals/ResetPasswordModal'
 import Layout from '../layouts/Layout'
 import ManagerLogin from '../pages/Manager/ManagerLogin'
 import Account from '../pages/User/Account'
+import Booking from '../pages/User/Booking'
+import BookingDetails from '../pages/User/BookingDetails'
 import Home from '../pages/User/Home'
 import HotelDetails from '../pages/User/HotelDetails'
 import Login from '../pages/User/Login'
 import Register from '../pages/User/Register'
 import Search from '../pages/User/Search'
-import Booking from '../pages/User/Booking'
 
 const UserRouter = () => {
   const { user } = useSelector((state: any) => state.auth || localStorage.getItem('user'));
@@ -27,6 +28,7 @@ const UserRouter = () => {
           <Route path="/hotel/:hotelId" element={<HotelDetails />} />
           <Route path="/search" element={<Search />} />
           <Route path="/booking" element={<Booking />} />
+          <Route path="/booking/:bookingId" element={<BookingDetails />} />
         </Route>
 
         <Route path='/manager/login' element={<ManagerLogin/>}/>

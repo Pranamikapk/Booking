@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { AppDispatch, RootState } from '../../app/store';
 import { logout, reset } from '../../features/user/authSlice';
 
-const Header : React.FC = () => {
+const Header: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.auth);
@@ -15,33 +15,31 @@ const Header : React.FC = () => {
   const onLogout = () => {
     dispatch(logout());
     dispatch(reset());
-    toast.success('Logged out successfully',{
-      className:'toast-custom'
+    toast.success('Logged out successfully', {
+      className: 'toast-custom',
     });
     navigate('/');
   };
 
-  const handleProfileClick = (e : React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation()
+  const handleProfileClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
     if (!user) {
-      toast.error('Please login to access your profile',{
-         className:'toast-custom'
+      toast.error('Please login to access your profile', {
+        className: 'toast-custom',
       });
       navigate('/login');
-    }else if (user.isBlocked) {
-      toast.error('Your account is blocked.',{
-         className:'toast-custom'
+    } else if (user.isBlocked) {
+      toast.error('Your account is blocked.', {
+        className: 'toast-custom',
       });
-      console.log('Navigating...');
       navigate('/login');
-
-      localStorage.clear(); 
+      localStorage.clear();
     } else {
       setIsDropdownOpen((prev) => !prev);
     }
   };
 
-  const handleOutsideClick = (e : Event) => {
+  const handleOutsideClick = (e: Event) => {
     if (isDropdownOpen && (e.target as HTMLElement).closest('.dropdown') === null) {
       setIsDropdownOpen(false);
     }
@@ -52,31 +50,22 @@ const Header : React.FC = () => {
     return () => {
       window.removeEventListener('click', handleOutsideClick);
     };
-  }, [isDropdownOpen,user]);
+  }, [isDropdownOpen, user]);
 
   return (
-    <div className="flex justify-between">
-       <div className="flex justify-center items-center ">
-          <Link to={'/'} className="flex flex-col items-center">
-            <img src='/images/AddHotel/Untitled design.png' alt="Logo" className="w-12 h-12 rounded-full" /> 
-          </Link>
-        </div>
-      {/* <div className="flex gap-2 border border-gray-300 rounded-full py-2 px-4 shadow-md shadow-gray-100 items-center whitespace-nowrap">
-        <div>Anywhere</div>
-        <div className="border-l border-gray-300 h-6"></div>
-        <div>Any week</div>
-        <div className="border-l border-gray-300 h-6"></div>
-        <div>Add guests</div>
-        <button className="bg-primary text-white p-1 rounded-full">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-            />
-          </svg>
-        </button>
-      </div> */}
+    <div className="flex justify-between items-center py-4 px-8">
+      <div className="flex items-center gap-8">
+        {/* <Link to="/user" className="text-gray-600 hover:text-black">
+          Profile
+        </Link>
+        <Link to="/bookings" className="text-gray-600 hover:text-black">
+          Bookings
+        </Link> */}
+      </div>
+
+      <Link to="/" className="flex flex-col items-center">
+        <img src="/images/AddHotel/SE3.png" alt="Logo" className="w-20 h-12 rounded-full" />
+      </Link>
 
       <div className="relative dropdown">
         <div className="flex items-center gap-2 cursor-pointer" onClick={handleProfileClick}>
@@ -97,27 +86,31 @@ const Header : React.FC = () => {
         {user && isDropdownOpen && (
           <div className="absolute right-0 mt-2 bg-white border border-gray-300 rounded-md shadow-lg z-10">
             <ul className="py-2">
-            {!user.isBlocked && (
-              <div>
-                <li>
-                  <Link to="/user" className="block px-4 py-2 hover:bg-gray-100" onClick={() => setIsDropdownOpen(false)}>
-                    Profile
-                  </Link>
-                </li>
-                <li>
-                <button onClick={onLogout} className="block px-4 py-2 hover:bg-gray-100">
-                  Logout
-                </button>
-              </li>
-              </div>
+              {!user.isBlocked && (
+                <>
+                  <li>
+                    <Link to="/user" className="block px-4 py-2 hover:bg-gray-100" onClick={() => setIsDropdownOpen(false)}>
+                      Profile
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/user/bookings" className="block px-4 py-2 hover:bg-gray-100" onClick={() => setIsDropdownOpen(false)}>
+                      Bookings
+                    </Link>
+                  </li>
+                  <li>
+                    <button onClick={onLogout} className="block px-4 py-2 hover:bg-gray-100">
+                      Logout
+                    </button>
+                  </li>
+                </>
               )}
-              
             </ul>
           </div>
         )}
       </div>
     </div>
   );
-}
+};
 
 export default Header;

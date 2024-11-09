@@ -1,4 +1,3 @@
-import { addDays } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import { DateRange } from 'react-day-picker';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,10 +15,7 @@ const HotelDetails: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { hotel, isLoading } = useSelector((state: RootState) => state.hotel);
 
-  const [dateRange, setDateRange] = useState<DateRange | undefined>({
-    from: new Date(),
-    to: addDays(new Date(), 7)
-  });
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [guests, setGuests] = useState(1);
 
   useEffect(() => {
