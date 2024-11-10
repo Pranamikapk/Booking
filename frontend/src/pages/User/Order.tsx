@@ -1,5 +1,3 @@
-'use client'
-
 import { Diamond } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -16,7 +14,6 @@ import { TripDetails } from '../../components/Booking/TripDetails'
 import Spinner from '../../components/Spinner'
 import Button from '../../components/ui/Button'
 import Card from '../../components/ui/Card'
-
 interface LocationState {
   checkIn: string
   checkOut: string
@@ -29,7 +26,7 @@ interface LocationState {
   total: number
 }
 
-export default function Booking() {
+export default function Order() {
   const location = useLocation()
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()

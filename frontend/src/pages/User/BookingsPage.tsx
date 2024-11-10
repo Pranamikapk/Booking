@@ -40,6 +40,8 @@ const BookingsPage: React.FC = () => {
       </div>
 
       <div className={`${viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}`}>
+        {bookings.length ? 
+        <>
         {bookings.map((booking: Booking) => (
           <Card key={booking._id} className={`overflow-hidden ${viewMode === 'list' ? 'flex flex-col sm:flex-row' : ''}`}>
             <div className={`${viewMode === 'list' ? 'w-full sm:w-64 h-50' : 'h-48'} relative`}>
@@ -82,6 +84,9 @@ const BookingsPage: React.FC = () => {
             </div>
           </Card>
         ))}
+        </>
+        : 'No bookings yet'
+        }
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ export interface User {
     email: string;
     password?: string
     token ?: string;
-    phone?: string; 
+    phone: string; 
     // meta?: any;   
     
     isVerified ?: boolean;
@@ -15,11 +15,11 @@ export interface User {
 export interface UserData {
     name?: string;
     email: string;
+    phone?: string;
     password?: string; 
   }
 
 export interface UserCredentials extends User{
-  phone?: string
   idType?: string
   idNumber ?: string
 }

@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import Razorpay from 'razorpay';
 import { v4 as uuidv4 } from 'uuid';
 import Booking from '../models/bookingModel.js';
+import Manager from '../models/managerModel.js';
 
 
 const razorpay = new Razorpay({
@@ -136,10 +137,10 @@ export async function verifyPayment(req, res) {
 }
 
 
-export async function listBookings(req,res){
-    console.log('Inside');
+export async function listBookings(req,res){            
     try {
-        const bookings = await Booking.find({}).populate('hotel'); 
+        const userId = req.user?.id        
+        const bookings = await Booking.find({user: userId}).populate('hotel'); 
         console.log(bookings);        
         res.status(200).json(bookings);
         } catch (error) {
@@ -170,5 +171,37 @@ export async function bookingDetails(req,res) {
     } catch (error) {
         console.error("Error fetching booking details:", error);
         res.status(500).json({ message: 'Error fetching booking details' })
+    }
+}
+
+export async function listReservations(req, res) {
+    console.log('Listing reservations');
+    
+    try {
+        const managerId = req.user.id;
+        const manager = await Manager.findById(managerId);
+        console.log('Manager:', manager);
+        
+        if (!manager) {
+            console.error("Manager not found with ID:", managerId);
+            return res.status(404).json({ message: 'Manager not found' });
+        }
+
+        if (!manager.hotelId) {
+            console.error("Manager has no associated hotel");
+            return res.status(400).json({ message: 'Manager has no associated hotel' });
+        }
+
+        console.log('Fetching reservations for hotel:', manager.hotelId);
+        
+        const reservations = await Booking.find({ hotel: manager.hotelId })
+            .populate('user', 'name email phone')
+            .sort({ checkInDate: 1 });
+        console.log('Reservations found:', reservations.length);
+
+        res.status(200).json(reservations);
+    } catch (error) {
+        console.error("Error fetching reservations:", error);
+        res.status(500).json({ message: 'Error fetching reservations' });
     }
 }

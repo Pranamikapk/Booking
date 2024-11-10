@@ -10,6 +10,7 @@ import ManagerAccount from "../pages/Manager/ManagerAccount"
 import ManagerDashboard from "../pages/Manager/ManagerDashboard"
 import ManagerLogin from "../pages/Manager/ManagerLogin"
 import ManagerRegister from "../pages/Manager/ManagerRegister"
+import Reservations from "../pages/Manager/Reservations"
 
 const ManagerRouter = () => {
     const {manager} = useSelector((state:any)=>state.managerAuth || localStorage.getItem('manager'))
@@ -26,7 +27,7 @@ const ManagerRouter = () => {
                     <Route path='/manager/addHotel' element={manager ? <AddHotel/> : <Navigate to = "/manager/login"/> } />
                     <Route path='/manager/hotel/:hotelId' element={manager ? <HotelDetails/> : <Navigate to = "/manager/login"/> } />
                     <Route path='/manager/hotel/:hotelId/edit' element={manager ? <EditHotel/> : <Navigate to = "/manager/login"/>} />
-
+                    <Route path='/manager/reservations' element={manager ? <Reservations/> : <Navigate to = "/manager/login"/> } />
                 </Route>
             </Routes>
         </BrowserRouter>

@@ -36,7 +36,7 @@ userRouter.get("/hotel/search", search);
 //Booking
 userRouter.post("/booking",protect, createBooking)
 userRouter.post("/verifyPayment", verifyPayment);
-userRouter.get("/listBookings",listBookings)
+userRouter.get("/listBookings",protect  ,listBookings)
 userRouter.get("/booking/:bookingId",bookingDetails)
 
 

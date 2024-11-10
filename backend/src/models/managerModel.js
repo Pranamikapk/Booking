@@ -3,6 +3,10 @@ const { Schema } = mongoose;
 
 const managerSchema = new Schema(
   {
+    hotel: {
+      type: String,
+      required: true
+    },
     name: {
       type: String,
       required: true,
@@ -26,6 +30,14 @@ const managerSchema = new Schema(
     },
     token: {
       type: String,
+    },
+    walletBalance: {
+      type : Number,
+      default: 0
+    },
+    hotelId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Hotel'
     },
     isBlocked: {
       type: Boolean,

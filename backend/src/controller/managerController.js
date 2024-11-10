@@ -19,7 +19,12 @@ const register = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, phone, licence, password } = req.body;
+    const { hotel , name, email, phone, licence, password  } = req.body;
+
+    let existingHotel = await Manager.findOne({ hotel })
+    if(existingHotel){
+      return res.status(400).json({ message: "Hotel already exists with this name"})
+    }
 
     let existingManager = await Manager.findOne({ email });
     if (existingManager) {
@@ -31,6 +36,7 @@ const register = async (req, res) => {
     const otp = generateOTP();
 
     const newManager = new Manager({
+      hotel,
       name,
       email,
       phone,

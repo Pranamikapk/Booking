@@ -1,4 +1,7 @@
+import { Hotel } from "./hotelTypes"
+
 export interface Manager{
+    hotelId: Hotel | null
     meta: any
     isBlocked: boolean
     phone: string

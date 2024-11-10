@@ -9,35 +9,43 @@ import Spinner from '../../components/Spinner'
 import { register, reset } from '../../features/manager/managerSlice'
 
 interface FormData {
+  hotel: string
   name : string
   email : string
   phone : string 
   password : string 
+  licence: string
 }
 
 interface FormErrors {
+  hotel ?: string
   name ?: string
   email ?: string
   phone ?: string 
   password ?: string 
+  licence ?: string
 }
 
 function ManagerRegister() {
     const[formData,setFormData] = useState<FormData>({
+        hotel: '',
         name:'',
         email:'',
         phone:'',
-        password:''
+        password:'',
+        licence: ''
     })
 
     const [formErrors, setFormErrors] = useState<FormErrors>({
+        hotel:'',
         name:'',
         email:'',
         phone:'',
-        password:''
+        password:'',
+        licence: ''
     });
 
-    const {name,email,phone,password} = formData
+    const {hotel,name,email,phone,password,licence} = formData
     const navigate = useNavigate()
     const dispatch = useDispatch<AppDispatch>()
     const [showOtpModal ,setShowOtpModal] = useState(false)
@@ -66,6 +74,9 @@ function ManagerRegister() {
 
     const validateFields = ():FormErrors => {
         let errors : FormErrors = {};
+        if (!hotel) {
+          errors.hotel = 'Hotel name is required';
+        }
         if (!name) {
           errors.name = 'Name is required';
         }
@@ -83,6 +94,11 @@ function ManagerRegister() {
           errors.password = 'Password is required';
         }else if( password.length < 6 ){
             errors.password = 'Password must contain atleast 6 digits'
+        }
+        if (!licence) {
+          errors.licence = 'Licence is required'
+        } else if (!/^[A-Z]{2}\d{6}$/.test(licence)) {
+          errors.licence = 'Licence must be in format: AA123456'
         }
         return errors;
       };
@@ -102,13 +118,15 @@ function ManagerRegister() {
           setFormErrors(errors);
           return;
         } else {
-          setFormErrors({name:'', email: '',phone: '', password: '' });
+          setFormErrors({hotel:'',name:'', email: '',phone: '', password: '' });
         }
         dispatch(reset())
         const managerData = {
+            hotel,
             name,
             email,
             phone,
+            licence,
             password
         }
         console.log(managerData);
@@ -263,6 +281,17 @@ function ManagerRegister() {
     <div className="p-6 space-y-6">
         <h1 className='text-4xl text-center mb-4'>Register</h1>
         <form className='space-y-6' onSubmit={onSubmit}>
+             <input type="text" 
+                placeholder='hotelName' 
+                value={hotel} 
+                name='hotel'
+                onChange={onChange} 
+                className={`w-full p-2 border ${
+                    formErrors.hotel ? 'border-red-500' : 'border-gray-300'
+                  } rounded`}/>
+                {formErrors.hotel && (
+                  <p className="text-red-500 text-sm mt-1">{formErrors.hotel}</p>
+                )}
             <input type="text" 
                 placeholder='name' 
                 value={name} 
@@ -296,6 +325,19 @@ function ManagerRegister() {
                 {formErrors.phone && (
                   <p className="text-red-500 text-sm mt-1">{formErrors.phone}</p>
                 )}
+             <input 
+                type="text" 
+                placeholder='Licence (Format: AA123456)' 
+                name='licence' 
+                value={licence} 
+                onChange={onChange} 
+                className={`w-full p-2 border ${
+                  formErrors.licence ? 'border-red-500' : 'border-gray-300'
+                } rounded`}
+              />
+              {formErrors.licence && (
+                <p className="text-red-500 text-sm mt-1">{formErrors.licence}</p>
+              )}
             <input type="password" 
                 placeholder='password'
                 name='password' 

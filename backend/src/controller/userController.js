@@ -159,6 +159,7 @@ const userLogin = async (req, res) => {
       message: "Login successful",
       name: user.name,
       email: user.email,
+      phone: user.phone,
       isBlocked: user.isBlocked,
       token: generateToken(user._id, user.role),
     });
@@ -313,9 +314,6 @@ export const search = async (req, res) => {
   }
 };
 
-const booking = async (req,res)=>{
-
-}
 
 const generateToken = (id, role) => {
   return jwt.sign({ id, role }, process.env.JWT_SECRET_KEY, {
@@ -333,5 +331,5 @@ export default {
   resetPassword,
   googleLogin,
   listHotels,
-  booking
+  
 };

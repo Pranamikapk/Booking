@@ -33,7 +33,7 @@ export default function Account(): React.JSX.Element | null {
       setEmail(storedUser.email)
       setPhone(storedUser.phone || '')
     }
-  }, [user, storedUser])
+  }, [])
 
   let { subpage } = useParams()
   if (subpage === undefined) {
@@ -186,7 +186,9 @@ export default function Account(): React.JSX.Element | null {
                       id="phone"
                       name="phone"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      onChange={(e) => {
+                        console.log("Phone input changed:", e.target.value); // Debugging line
+                        setPhone(e.target.value)}}
                       className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
                     />
                   </div>
