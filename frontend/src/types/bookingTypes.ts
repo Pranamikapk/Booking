@@ -8,14 +8,22 @@ export interface BookingData {
     checkOutDate: string;
     guests: number;
     totalPrice: number;
-    userCredentials: UserCredentials;}
-  
+    userCredentials: UserCredentials;
+}
+
+export interface CancellationRequest {
+    reason: string;
+    status: 'pending' | 'approved' | 'rejected';
+}
+
 export interface Booking extends BookingData {
+    _id: string;
+    status: string;
+    cancellationRequest: CancellationRequest;
+    specialRequests: any;
     totalDays: number;
     transactionId: string;
     amountPaid: number;
     remainingAmount: number;
-    _id: string;
-    status: string;
-    hotel: HotelFormState
-  }
+    hotel: HotelFormState;
+}

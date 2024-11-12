@@ -1,7 +1,7 @@
 import express from "express";
 import { body } from "express-validator";
 import multer from "multer";
-import { listReservations } from "../controller/bookingController.js";
+import { bookingDetails, cancelApprove, cancelReject, listReservations } from "../controller/bookingController.js";
 import {
   createHotel,
   deleteHotel,
@@ -60,4 +60,9 @@ managerRouter.delete("/hotel/:hotelId", managerAuth, deleteHotel);
 
 
 managerRouter.get("/reservations/:managerId",managerAuth,listReservations)
+managerRouter.get("/reservations/:bookingId",managerAuth,bookingDetails)
+
+managerRouter.post("/cancel/:bookingId/approve",cancelApprove)
+managerRouter.post("/cancel/:bookingId/reject",cancelReject)
+
 export default managerRouter;

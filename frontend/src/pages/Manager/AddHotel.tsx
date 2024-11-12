@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { AppDispatch, RootState } from '../../app/store';
+import Button from '../../components/ui/Button';
 import { createHotel, updateFormData } from '../../features/hotel/hotelSlice';
 import { HotelFormState } from '../../types/hotelTypes';
 import Address from './AddHotel/Address';
@@ -18,33 +19,99 @@ const AddHotel = () => {
         (state : RootState) => state.hotelAuth
     )
     const navigate = useNavigate()
-    const nextStep = () => dispatch(updateFormData({step : step + 1})); 
+    const [errors, setErrors] = useState<Record<string, string>>({});
+    const [isFormValid, setIsFormValid] = useState(false);
+
+    const validateStep = (stepData: any): boolean => {
+        let stepErrors: Record<string, string> = {};
+        let isValid = true;
+
+        switch (step) {
+            case 0: 
+                if (!propertyType) {
+                    stepErrors.propertyType = "Property type is required";
+                    isValid = false;
+                }
+                break;
+            case 1: 
+                if (!placeType) {
+                    stepErrors.placeType = "Place type is required";
+                    isValid = false;
+                }
+                break;
+            case 2: 
+                if (!address.city || !address.state || !address.country || !address.postalCode) {
+                    stepErrors.address = "All address fields are required";
+                    isValid = false;
+                }
+                break;
+            case 3: 
+                if (rooms.guests < 1  || rooms.bedrooms < 1 || rooms.bathrooms < 1) {
+                    stepErrors.rooms = "Invalid room configuration";
+                    isValid = false;
+                }
+                break;
+            case 4: 
+                if (amenities.length === 0) {
+                    stepErrors.amenities = "At least one amenity is required";
+                    isValid = false;
+                }
+                break;
+            case 5: 
+                if (!name || !description || photos.length === 0) {
+                    stepErrors.photo = "Name, description, and at least one photo are required";
+                    isValid = false;
+                }
+                break;
+            case 6: 
+                if (!price || price <= 0) {
+                    stepErrors.price = "Valid price is required";
+                    isValid = false;
+                }
+                break;
+        }
+
+        setErrors(stepErrors);
+        setIsFormValid(isValid);
+        return isValid;
+    };
+
+    const nextStep = () => {
+        if (validateStep(step)) {
+            dispatch(updateFormData({step : step + 1}));
+        }
+    };
+
     const prevStep = () => dispatch(updateFormData({step : step - 1}));
 
     const handleChange = (data: Partial<HotelFormState>) => {
         dispatch(updateFormData(data))
+        validateStep(step);
     };
 
     const handleSubmit = async () => {
-        const formData: HotelFormState = {
-            propertyType,
-            placeType,
-            address,
-            rooms,
-            amenities,
-            name,
-            description,
-            photos,
-            price,
-            step,
-            isLoading,
-            isSuccess,
-            isError,
-            message,
-            manager: null,
-            hotels: []
-        };
-        dispatch(createHotel(formData));
+        if (validateStep(step)) {
+            const formData: HotelFormState = {
+                propertyType,
+                placeType,
+                address,
+                rooms,
+                amenities,
+                name,
+                description,
+                photos,
+                price,
+                step,
+                isLoading,
+                isSuccess,
+                isError,
+                message,
+                manager: null,
+                hotels: [],
+                isListed: false
+            };
+            dispatch(createHotel(formData));
+        }
     }
 
     useEffect(() => {
@@ -53,13 +120,17 @@ const AddHotel = () => {
         }
     }, [isSuccess, navigate]);
 
+    useEffect(() => {
+        validateStep(step);
+    }, [step]);
+
     if(isLoading){
         return <p>Loading ...</p>
     }
 
     const steps = [
-        <PropertyType formData={propertyType} handleChange={handleChange} nextStep={nextStep} />,
-        <PlaceType formData={{placeType}} handleChange={handleChange} nextStep={nextStep} prevStep={prevStep} />,
+        <PropertyType formData={{propertyType}} handleChange={handleChange} errors={errors} />,
+        <PlaceType formData={{placeType}} handleChange={handleChange} errors={errors} />,
         <Address formData={{
             address: {
                 city: address?.city || '',
@@ -67,7 +138,7 @@ const AddHotel = () => {
                 country: address?.country || '',
                 postalCode: address?.postalCode || ''
             }
-        }} handleChange={handleChange} nextStep={nextStep} prevStep={prevStep} />,
+        }} handleChange={handleChange} errors={errors} />,
         <Room formData={{
             rooms:{
                 guests : rooms.guests || 1 ,
@@ -75,10 +146,10 @@ const AddHotel = () => {
                 bathrooms: rooms.bathrooms || 0,
                 diningrooms: rooms.diningrooms || 0,
                 livingrooms: rooms.livingrooms || 0
-            }}} handleChange={handleChange} nextStep={nextStep} prevStep={prevStep} />,
-        <Amenities formData={{amenities}} handleChange={handleChange} nextStep={nextStep} prevStep={prevStep} />,
-        <Photo formData={{name ,description ,photos}} handleChange={handleChange} nextStep={nextStep} prevStep={prevStep} />,
-        <Price formData={{price}} handleChange={handleChange} prevStep={prevStep}/>
+            }}} handleChange={handleChange} errors={errors} />,
+        <Amenities formData={{amenities}} handleChange={handleChange} errors={errors} />,
+        <Photo formData={{name ,description ,photos }} handleChange={handleChange} errors={errors} />,
+        <Price formData={{price}} handleChange={handleChange} errors={errors} />
     ];
 
     return (
@@ -86,31 +157,32 @@ const AddHotel = () => {
             {steps[step]}
             <div className="flex justify-between mt-4">
                 {step > 0 && (
-                    <button 
+                    <Button 
                         onClick={prevStep} 
-                        className="bg-gray-300 text-black px-4 py-2 rounded-2xl mr-4"
+                        variant="secondary"
                     >
                         Previous
-                    </button>
+                    </Button>
                 )}
-                    {step < steps.length - 1 && (
-                        <button 
-                            onClick={nextStep} 
-                            className="primary text-white px-4 py-2 rounded ml-auto"
-                        >
-                            Next
-                        </button>
-                    )}
-                    {step === steps.length - 1 && (
-                        <button 
-                            onClick={handleSubmit} 
-                            className="bg-green-600 text-white px-4 py-2 rounded-2xl ml-auto"
-                        >
-                            Submit
-                        </button>
-                    )}
+                {step < steps.length - 1 && (
+                    <Button 
+                        onClick={nextStep} 
+                        disabled={!isFormValid}
+                        className="ml-auto"
+                    >
+                        Next
+                    </Button>
+                )}
+                {step === steps.length - 1 && (
+                    <Button 
+                        onClick={handleSubmit} 
+                        disabled={!isFormValid}
+                        className="ml-auto"
+                    >
+                        Submit
+                    </Button>
+                )}
             </div>
-
         </div>
     );
 };

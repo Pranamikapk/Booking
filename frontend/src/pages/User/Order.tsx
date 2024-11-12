@@ -14,6 +14,8 @@ import { TripDetails } from '../../components/Booking/TripDetails'
 import Spinner from '../../components/Spinner'
 import Button from '../../components/ui/Button'
 import Card from '../../components/ui/Card'
+
+
 interface LocationState {
   checkIn: string
   checkOut: string

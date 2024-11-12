@@ -42,7 +42,7 @@ const BookingSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "cancelled", "completed"],
+      enum: ["pending", "cancelled", "completed", "cancellation_pending"],
       default: "pending",
     },
     amountPaid: {
@@ -77,6 +77,10 @@ const BookingSchema = new Schema(
         type: String,
         required: true,
       },
+    },
+    cancellationRequest: {
+      type: Schema.Types.ObjectId,
+      ref: "CancellationModel",
     },
   },
   { timestamps: true }

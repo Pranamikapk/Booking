@@ -28,6 +28,10 @@ const userSchema = new Schema(
       enum: ["client","manager", "admin"],
       default: "client",
     },
+    walletBalance: {
+      type: Number,
+      min: 0
+    },
     isBlocked: {
       type: Boolean,
       default: false,

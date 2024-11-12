@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import Razorpay from 'razorpay';
 import { v4 as uuidv4 } from 'uuid';
 import Booking from '../models/bookingModel.js';
+import CancellationModel from '../models/cancellationModel.js';
 import Manager from '../models/managerModel.js';
 
 
@@ -179,9 +180,7 @@ export async function listReservations(req, res) {
     
     try {
         const managerId = req.user.id;
-        const manager = await Manager.findById(managerId);
-        console.log('Manager:', manager);
-        
+        const manager = await Manager.findById(managerId);        
         if (!manager) {
             console.error("Manager not found with ID:", managerId);
             return res.status(404).json({ message: 'Manager not found' });
@@ -191,13 +190,11 @@ export async function listReservations(req, res) {
             console.error("Manager has no associated hotel");
             return res.status(400).json({ message: 'Manager has no associated hotel' });
         }
-
-        console.log('Fetching reservations for hotel:', manager.hotelId);
         
         const reservations = await Booking.find({ hotel: manager.hotelId })
             .populate('user', 'name email phone')
+            .populate('hotel', 'name address propertyType placeType ')
             .sort({ checkInDate: 1 });
-        console.log('Reservations found:', reservations.length);
 
         res.status(200).json(reservations);
     } catch (error) {
@@ -205,3 +202,96 @@ export async function listReservations(req, res) {
         res.status(500).json({ message: 'Error fetching reservations' });
     }
 }
+
+export async function cancelRequest(req, res) {
+    const { bookingId, reason } = req.body;
+    
+    try {
+        const newRequest = new CancellationModel({ bookingId, reason });
+        await newRequest.save();
+
+        const updatedBooking = await Booking.findByIdAndUpdate(
+            bookingId,
+            { 
+                $set: { 
+                    status: 'cancellation_pending',
+                    cancellationRequest: {
+                        reason: reason,
+                        status: 'pending',
+                        _id: newRequest._id
+                    }
+                }
+            },
+            { new: true }
+        );
+
+        if (!updatedBooking) {
+            return res.status(404).json({ message: 'Booking not found' });
+        }
+
+        res.status(201).json({
+            message: 'Cancellation request submitted successfully.',
+            cancellationRequest: {
+                id: newRequest._id,
+                bookingId: newRequest.bookingId,
+                reason: newRequest.reason,
+                status: newRequest.status,
+                createdAt: newRequest.createdAt
+            },
+            updatedBooking: {
+                id: updatedBooking._id,
+                status: updatedBooking.status
+            }
+        });
+    } catch (error) {
+        console.error('Error in cancelRequest:', error);
+        res.status(500).json({ message: 'Error submitting cancellation request', error: error.message });
+    }
+}
+
+export async function cancelApprove(req, res) {
+    console.log('inside');
+    
+    try {
+        const booking = await Booking.findById(req.params.bookingId);
+        console.log(booking);
+        
+        if (!booking) {
+            return res.status(404).send('Booking not found.');
+        }
+        booking.cancellationRequest.status = 'approved';
+        await booking.save();
+
+        const checkInDate = new Date(booking.checkInDate);
+        const currentDate = new Date();
+        const timeDiff = checkInDate.getTime() - currentDate.getTime();
+        const daysDiff = timeDiff / (1000 * 3600 * 24);
+
+        let refundPercentage = 100;
+        if (daysDiff < 2) {
+            refundPercentage = Math.max(0, 100 - (2 * (2 - daysDiff)));
+        }
+
+        const refundAmount = (booking.amountPaid * refundPercentage) / 100 ;
+
+        res.status(200).json({ message: 'Cancellation approved and refund processed.', refundAmount });
+    } catch (error) {
+        res.status(500).send('Error approving cancellation: ' + error.message);
+    }
+}
+
+export async function cancelReject(req, res) {
+    try {
+        const booking = await Booking.findById(req.params.bookingId);
+        if (!booking) {
+            return res.status(404).send('Booking not found.');
+        }
+        booking.cancellationRequest.status = 'rejected';
+        manager.wallet = 
+        await booking.save();
+        res.status(200).json({ message: 'Cancellation request rejected.' });
+    } catch (error) {
+        res.status(500).send('Error rejecting cancellation: ' + error.message);
+    }
+}
+

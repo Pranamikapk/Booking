@@ -1,10 +1,12 @@
 'use client'
 
+import { Trash } from 'lucide-react'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import ReactCrop, { Crop, PixelCrop } from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../../../app/store'
+import Spinner from '../../../components/Spinner'
 import { updatePhotos } from '../../../features/hotel/hotelSlice'
 
 interface PhotoProps {
@@ -33,7 +35,7 @@ const Photo: React.FC<PhotoProps> = ({ formData, handleChange, nextStep, prevSte
 
     useEffect(() => {
         handleChange({ photos: photo, name: hotelName, description })
-    }, [photo, hotelName, description, handleChange])
+    }, [photo, hotelName, description])
 
     const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files
@@ -82,29 +84,54 @@ const Photo: React.FC<PhotoProps> = ({ formData, handleChange, nextStep, prevSte
     }, [])
 
     const handleSaveCroppedImage = useCallback(async () => {
-        if (imgRef.current && completedCrop) {
+        if (imgRef.current && completedCrop && completedCrop.width && completedCrop.height) {
             try {
-                setLoading(true)
-                const croppedImageBlob = await getCroppedImg(imgRef.current, completedCrop)
-                const formData = new FormData()
-                formData.append('file', croppedImageBlob, 'cropped_image.jpg')
-                formData.append('upload_preset', 'hotels')
-
-                const response = await fetch(`https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUD_NAME}/image/upload`, {
-                    method: 'POST',
-                    body: formData,
-                })
-                const result = await response.json()
-                setPhoto((prevPhotos) => [...prevPhotos, result.secure_url])
-                dispatch(updatePhotos([...photo, result.secure_url]))
+                setLoading(true);
+                const croppedImageBlob = await getCroppedImg(imgRef.current, completedCrop);
+                
+                if (!croppedImageBlob) {
+                    console.error("Failed to create cropped image blob.");
+                    setError("Failed to process image. Please try again.");
+                    setLoading(false);
+                    return;
+                }
+    
+                const formData = new FormData();
+                formData.append("file", croppedImageBlob, "cropped_image.jpg");
+                formData.append("upload_preset", "hotels");
+    
+                const response = await fetch(
+                    `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUD_NAME}/image/upload`, 
+                    {
+                        method: "POST",
+                        body: formData,
+                    }
+                );
+    
+                if (!response.ok) {
+                    console.error("Cloudinary upload failed:", await response.text());
+                    setError("Image upload failed. Please try again.");
+                    return;
+                }
+    
+                const result = await response.json();
+                console.log("Upload successful:", result);
+                setPhoto((prevPhotos) => [...prevPhotos, result.secure_url]);
+                dispatch(updatePhotos([...photo, result.secure_url]));
+    
             } catch (err) {
-                console.error('Upload error:', err)
+                console.error("Upload error:", err);
+                setError("An error occurred while uploading the image. Please try again.");
             } finally {
-                setLoading(false)
-                setCropImage(null)
+                setLoading(false);
+                setCropImage(null);
             }
+        } else {
+            console.error("No crop data or image reference found.");
+            setError("Please crop the image before uploading.");
         }
-    }, [completedCrop, dispatch, getCroppedImg, photo])
+    }, [completedCrop, dispatch, getCroppedImg, photo]);
+    
 
     const handleDeletePhoto = (index: number) => {
         const updatedPhotos = photo.filter((_, i) => i !== index)
@@ -240,6 +267,24 @@ const Photo: React.FC<PhotoProps> = ({ formData, handleChange, nextStep, prevSte
                     ref={fileInputRef}
                     style={{ display: 'none' }}
                 />
+                <div className="mt-4">
+                    {photo.length > 0 && (
+                        <div className="flex flex-wrap gap-4">
+                            {photo.map((url, index) => (
+                                <div key={index} className="relative w-40 h-40">
+                                    <img src={url} alt={`Uploaded photo ${index + 1}`} className="object-cover w-full h-full rounded-lg" />
+                                    <button
+                                        onClick={() => handleDeletePhoto(index)}
+                                        className="absolute bottom-1 right-1 text-white rounded p-1 w-7 bg-red-500"
+                                    >
+                                <Trash className="h-4 w-5" />
+                                </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
                 <div className="flex justify-start">
                     <button
                         type="button"
@@ -251,9 +296,7 @@ const Photo: React.FC<PhotoProps> = ({ formData, handleChange, nextStep, prevSte
                 </div>
             </div>
             {loading && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
-                </div>
+                <Spinner/>
             )}
         </div>
     )

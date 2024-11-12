@@ -9,7 +9,7 @@ import BookingDetails from '../pages/User/BookingDetails'
 import Home from '../pages/User/Home'
 import HotelDetails from '../pages/User/HotelDetails'
 import Login from '../pages/User/Login'
-import Booking from '../pages/User/Order'
+import Order from '../pages/User/Order'
 import Register from '../pages/User/Register'
 import Search from '../pages/User/Search'
 
@@ -27,7 +27,7 @@ const UserRouter = () => {
           <Route path="/resetPassword" element={<ResetPassword />} />
           <Route path="/hotel/:hotelId" element={<HotelDetails />} />
           <Route path="/search" element={<Search />} />
-          <Route path="/booking" element={<Booking />} />
+          <Route path="/booking" element={<Order />} />
           <Route path="/booking/:bookingId" element={<BookingDetails />} />
         </Route>
 

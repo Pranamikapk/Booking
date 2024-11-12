@@ -42,7 +42,7 @@ export interface HotelFormState {
     amenities: string[];
     name: string;
     description: string;
-    photos: (File | string)[];
+    photos: string[];
     price: number | null;
     step: number
     isLoading: boolean;

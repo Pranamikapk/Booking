@@ -21,5 +21,5 @@ export interface UserData {
 
 export interface UserCredentials extends User{
   idType?: string
-  idNumber ?: string
+  idPhoto ?: string
 }

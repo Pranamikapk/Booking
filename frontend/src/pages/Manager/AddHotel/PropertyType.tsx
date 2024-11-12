@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import Button from '../../../components/ui/Button';
 import Card from '../../../components/ui/Card';
@@ -11,12 +12,14 @@ const propertyTypeImages: Record<string, string> = {
 };
 
 interface PropertyTypeProps {
-    formData: any;
-    handleChange: (data: any) => void;
-    nextStep: () => void;
+    formData: {
+        propertyType: string;
+    };
+    handleChange: (data: { propertyType: string }) => void;
+    errors: Record<string, string>;
 }
 
-const PropertyType: React.FC<PropertyTypeProps> = ({ formData, handleChange, nextStep }) => {
+const PropertyType: React.FC<PropertyTypeProps> = ({ formData, handleChange, errors }) => {
     const [selectedType, setSelectedType] = useState<string>(formData.propertyType || '');
 
     useEffect(() => {
@@ -30,47 +33,43 @@ const PropertyType: React.FC<PropertyTypeProps> = ({ formData, handleChange, nex
         handleChange({ propertyType: type });
     };
 
-    console.log(formData);
-    
     const propertyTypes: string[] = ['Resort', 'Flat/Apartment', 'House', 'Beach House'];
 
     return (
-        <>
-            <h1 className="text-black text-4xl font-bold mb-5 text-center">
+        <div className="max-w-2xl mx-auto p-4">
+            <h1 className="text-3xl font-bold mb-6 text-center">
                 Which of these best describes your Property Type?
             </h1>
-            <div className="grid grid-cols-4 gap-3 mt-20">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {propertyTypes.map((type, index) => (
                     <Card
                         key={index}
-                        className={`max-w-xs border ${
-                            selectedType === type ? 'border-blue-600 bg-blue-100' : 'border-gray-300'
+                        className={`cursor-pointer ${
+                            selectedType === type ? 'ring-2 ring-primary' : ''
                         }`}
                     >
-                        <CardContent className="relative p-0 flex flex-col items-center">
+                        <CardContent className="p-4 flex flex-col items-center">
                             <img
                                 src={propertyTypeImages[type]}
                                 alt={type}
-                                width={20}
-                                height={20}
-                                className="w-24 h-24 object-cover rounded-t-lg"
+                                className="w-16 h-16 object-contain mb-2"
                             />
-                            <div className="p-4">
-                                <h3 className="font-bold text-center">{type}</h3>
-                                <Button
-                                    className={`primary h-10 px-4 mt-2 ${
-                                        selectedType === type ? 'bg-blue-600 text-white' : 'bg-gray-200 text-black'
-                                    }`}
-                                    onClick={() => handlePropertyChange(type)}
-                                >
-                                    {selectedType === type ? 'Selected' : 'Choose Property'}
-                                </Button>
-                            </div>
+                            <h3 className="font-semibold text-center mb-2">{type}</h3>
+                            <Button
+                                variant={selectedType === type ? "primary" : "secondary"}
+                                className="w-full"
+                                onClick={() => handlePropertyChange(type)}
+                            >
+                                {selectedType === type ? 'Selected' : 'Choose'}
+                            </Button>
                         </CardContent>
                     </Card>
                 ))}
             </div>
-        </>
+            {errors.propertyType && (
+                <p className="text-red-500 text-sm mt-2">{errors.propertyType}</p>
+            )}
+        </div>
     );
 };
 

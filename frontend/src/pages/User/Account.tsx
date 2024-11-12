@@ -1,5 +1,3 @@
-'use client'
-
 import { LogOut, UserCircle, Wallet } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -187,7 +185,7 @@ export default function Account(): React.JSX.Element | null {
                       name="phone"
                       value={phone}
                       onChange={(e) => {
-                        console.log("Phone input changed:", e.target.value); // Debugging line
+                        console.log("Phone input changed:", e.target.value); 
                         setPhone(e.target.value)}}
                       className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
                     />

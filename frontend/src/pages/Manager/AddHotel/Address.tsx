@@ -12,11 +12,10 @@ interface AddressProps {
   handleChange: (data: {
     address: { country?: string; state?: string; city?: string; postalCode?: string };
   }) => void;
-  nextStep: () => void;
-  prevStep: () => void;
+  errors: Record<string, string>;
 }
 
-const Address: React.FC<AddressProps> = ({ formData, handleChange }) => {
+const Address: React.FC<AddressProps> = ({ formData, handleChange ,errors}) => {
   const [states] = useState<string[]>([
     'Andhra Pradesh',
     'Arunachal Pradesh',
@@ -90,7 +89,6 @@ const Address: React.FC<AddressProps> = ({ formData, handleChange }) => {
           </select>
         </div>
 
-        {/* State */}
         <div>
           <label htmlFor="state" className="block text-gray-700 font-medium mb-2">
             State
@@ -111,7 +109,6 @@ const Address: React.FC<AddressProps> = ({ formData, handleChange }) => {
           </select>
         </div>
 
-        {/* City (Text Input) */}
         <div>
           <label htmlFor="city" className="block text-gray-700 font-medium mb-2">
             City
@@ -127,7 +124,6 @@ const Address: React.FC<AddressProps> = ({ formData, handleChange }) => {
           />
         </div>
 
-        {/* Postal Code */}
         <div>
           <label htmlFor="postalCode" className="block text-gray-700 font-medium mb-2">
             Postal Code
@@ -142,6 +138,8 @@ const Address: React.FC<AddressProps> = ({ formData, handleChange }) => {
             onChange={handleInputChange}
           />
         </div>
+        {errors.address && <p className="text-red-500">{errors.address}</p>}
+
       </div>
     </div>
   );
