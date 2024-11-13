@@ -32,7 +32,7 @@ const SearchCard: React.FC<SearchCardProps> = ({ states }) => {
 
   const onSubmit = () => {
     dispatch(setSearchValue(selectedState))
-    dispatch(setFilters({ state: selectedState, guestCount: guests }))
+    dispatch(setFilters({ state: selectedState, guestCount: guests , checkInDate , checkOutDate}))
     navigate('/search')
   }
 

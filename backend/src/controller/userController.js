@@ -287,8 +287,10 @@ const resetPassword = async (req, res) => {
 
 export const listHotels = async (req, res) => {
   try {
-    const hotels = await Hotel.find({ isListed: true });
-    console.log("hotelsController:", hotels);
+    
+    const hotels = await Hotel.find({
+      isListed: true,
+    });
     res.status(200).json(hotels);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -297,14 +299,32 @@ export const listHotels = async (req, res) => {
 
 export const search = async (req, res) => {
   try {
-    const { term } = req.query;
-    if (!term) {
-      return res.status(400).json({ message: "Search term is required" });
+    const { term, checkInDate } = req.query;
+    if (!term || !checkInDate) {
+      return res.status(400).json({ message: "Search term and check-in date are required" });
     }
+
+    const checkIn = new Date(checkInDate);
+
     const hotels = await Hotel.find({
-      $or: [
-        { "address.state": { $regex: term, $options: "i" } },
-        { "rooms.room": { $regex: term, $options: "i" } },
+      $and: [
+        {
+          $or: [
+            { "address.state": { $regex: term, $options: "i" } },
+            { "rooms.room": { $regex: term, $options: "i" } },
+          ],
+        },
+        {
+          bookings: {
+            $not: {
+              $elemMatch: {
+                checkIn: { $lte: checkIn },
+                checkOut: { $gte: checkIn },
+              },
+            },
+          },
+        },
+        { isListed: true },
       ],
     });
     res.json(hotels);

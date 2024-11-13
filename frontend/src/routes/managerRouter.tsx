@@ -10,6 +10,7 @@ import ManagerAccount from "../pages/Manager/ManagerAccount"
 import ManagerDashboard from "../pages/Manager/ManagerDashboard"
 import ManagerLogin from "../pages/Manager/ManagerLogin"
 import ManagerRegister from "../pages/Manager/ManagerRegister"
+import ManagerTransactions from "../pages/Manager/ManagerTransaction"
 import ReservationDetails from "../pages/Manager/ReservationDetails"
 import Reservations from "../pages/Manager/Reservations"
 
@@ -29,7 +30,9 @@ const ManagerRouter = () => {
                     <Route path='/manager/hotel/:hotelId' element={manager ? <HotelDetails/> : <Navigate to = "/manager/login"/> } />
                     <Route path='/manager/hotel/:hotelId/edit' element={manager ? <EditHotel/> : <Navigate to = "/manager/login"/>} />
                     <Route path='/manager/reservations' element={manager ? <Reservations/> : <Navigate to = "/manager/login"/> } />
-                    <Route path='/manager/reservation/:bookingId' element={manager ? <ReservationDetails/> : <Navigate to = "/manager/login"/> } />
+                    <Route path='/manager/reservations/:bookingId' element={manager ? <ReservationDetails/> : <Navigate to = "/manager/login"/> } />
+                    <Route path='/manager/transactions' element={manager ? <ManagerTransactions/> : <Navigate to = "/manager/login"/> } />
+
                 </Route>
             </Routes>
         </BrowserRouter>

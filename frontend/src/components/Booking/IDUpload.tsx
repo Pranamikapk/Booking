@@ -9,21 +9,23 @@ interface IDUploadProps {
 const IDUpload: React.FC<IDUploadProps> = ({ onUploadComplete }) => {
   const [idType, setIdType] = useState<'Aadhar' | 'Passport' | 'Driving License' | ''>('');
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadedUrls, setUploadedUrls] = useState<string[]>([]); 
+  const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
 
   const handleIdTypeChange = (event: ChangeEvent<HTMLSelectElement>) => {
     setIdType(event.target.value as 'Aadhar' | 'Passport' | 'Driving License');
-    setUploadedUrls([]);
+    setUploadedUrls([]); 
   };
 
-  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>, fileNumber: number) => {
-    const file = event.target.files?.[0];
-    if (file) {
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>, fileNumber: number) => {
+    const files = e.target.files;
+    if (files && files[0]) {
+      const file = files[0]; 
+
       try {
-        setIsUploading(true);     
+        setIsUploading(true); 
         const formData = new FormData();
-        formData.append('file', file);
-        formData.append('upload_preset', 'UserId'); 
+        formData.append('file', file); 
+        formData.append('upload_preset', 'UserId');
 
         const response = await fetch(`https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUD_NAME}/image/upload`, {
           method: 'POST',
@@ -39,11 +41,11 @@ const IDUpload: React.FC<IDUploadProps> = ({ onUploadComplete }) => {
 
         setUploadedUrls((prevUrls) => {
           const updatedUrls = [...prevUrls, newUrl];
-          
+
           if (idType === 'Aadhar' && updatedUrls.length === 2) {
-            onUploadComplete(updatedUrls,idType); 
+            onUploadComplete(updatedUrls, idType);
           } else if (idType !== 'Aadhar') {
-            onUploadComplete(updatedUrls,idType); 
+            onUploadComplete(updatedUrls, idType);
           }
 
           return updatedUrls;
@@ -54,7 +56,7 @@ const IDUpload: React.FC<IDUploadProps> = ({ onUploadComplete }) => {
         console.error(error);
         toast.error('Failed to upload ID photo. Please try again.');
       } finally {
-        setIsUploading(false);
+        setIsUploading(false); 
       }
     }
   };
@@ -62,7 +64,7 @@ const IDUpload: React.FC<IDUploadProps> = ({ onUploadComplete }) => {
   return (
     <div className="p-6">
       <h2 className="text-xl font-semibold mb-4">ID Verification</h2>
-      
+
       <label className="block text-sm font-medium text-gray-700">Select ID Type</label>
       <select
         value={idType}
@@ -79,14 +81,14 @@ const IDUpload: React.FC<IDUploadProps> = ({ onUploadComplete }) => {
         <label className="block text-sm font-medium text-gray-700">
           {idType === 'Aadhar' ? 'Upload Aadhar (Front and Back)' : 'Upload ID Photo'}
         </label>
-        
+
         <input
           type="file"
           accept="image/*"
           onChange={(e) => handleFileChange(e, 1)}
           className="form-input mt-1 block w-full"
         />
-        
+
         {idType === 'Aadhar' && (
           <input
             type="file"

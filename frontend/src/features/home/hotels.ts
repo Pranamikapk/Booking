@@ -16,7 +16,9 @@ interface HotelState {
         priceRange: [number, number];
         amenities: string[];
         guestCount: number;
-        state: string
+        state: string;
+        checkInDate: string;
+        checkOutDate: string;
     };
 }
 
@@ -32,11 +34,13 @@ const initialState: HotelState = {
         priceRange: [500, 9000],
         amenities: [],
         guestCount: 1,
-        state : ''
+        state : '',
+        checkInDate: '',
+        checkOutDate: ''
     },
 };
 
-export const fetchHotels = createAsyncThunk<Hotel[], void, { rejectValue: string }>(
+export const fetchHotels = createAsyncThunk<Hotel[], { rejectValue: string }>(
     "hotel/fetchHotels",
     async (_, thunkAPI) => {
         try {
@@ -60,11 +64,13 @@ export const fetchHotelById = createAsyncThunk<Hotel, string, { rejectValue: str
     }
 );
 
-export const searchHotels = createAsyncThunk<Hotel[], string, { rejectValue: string }>(
+export const searchHotels = createAsyncThunk<Hotel[], {searchTerm: string , checkInDate: string }, { rejectValue: string }>(
     "hotel/searchHotels",
-    async (searchTerm, thunkAPI) => {
+    async ({ searchTerm , checkInDate}, thunkAPI) => {
         try {
-            const response = await axios.get<Hotel[]>(`${API_URL}hotel/search?term=${searchTerm}`);
+            const response = await axios.get<Hotel[]>(`${API_URL}hotel/search`,{
+                params: {term: searchTerm, checkInDate}
+            });
             return response.data;
         } catch (error: any) {
             return thunkAPI.rejectWithValue(error.message || "Failed to search hotels");

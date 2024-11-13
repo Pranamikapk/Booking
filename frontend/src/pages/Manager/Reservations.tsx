@@ -29,8 +29,8 @@ export default function Reservations() {
     }
   }, [dispatch, manager]);
 
-  const handleDetailsClick = (reservationId: string) => {
-    navigate(`/manager/reservation/${reservationId}`);
+  const handleDetailsClick = (bookingId: string) => {
+    navigate(`/manager/reservations/${bookingId}`);
   };
 
   if (isLoading) return <Spinner />;
@@ -54,7 +54,11 @@ export default function Reservations() {
                   <div className="flex flex-col gap-2 mt-4">
                     <Button 
                       variant='primary'
-                      onClick={() => handleDetailsClick(reservation._id)}
+                      onClick={() =>{ handleDetailsClick(reservation._id)
+                        console.log(reservation._id);
+                        
+                      }}
+                      
                       className="w-full bg-blue-900 hover:bg-blue-600 text-white py-2 rounded-md"
                     >
                       View Details

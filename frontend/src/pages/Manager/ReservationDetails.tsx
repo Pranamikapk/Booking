@@ -22,6 +22,9 @@ const ReservationDetails: React.FC = () => {
   const [currentImage, setCurrentImage] = useState('');
   const [cancellationRequest, setCancellationRequest] = useState<{ reason: string; status: string } | null>(null);
 
+console.log(bookings);
+
+
   useEffect(() => {
     if (bookingId) {
       dispatch(reservationDetails({ bookingId }));
@@ -30,10 +33,11 @@ const ReservationDetails: React.FC = () => {
 
   useEffect(() => {
     if (bookings && bookings.length > 0) {
-      setBooking(bookings[0]);
-      setCancellationRequest(bookings[0].cancellationRequest || null);
+      const selectedBooking = bookings.find((b) => b._id === bookingId) || null;
+      setBooking(selectedBooking);
+      setCancellationRequest(selectedBooking?.cancellationRequest || null);
     }
-  }, [bookings]);
+  }, [bookings,bookingId]);
 
   const handleImageClick = (imageUrl: string) => {
     setCurrentImage(imageUrl);
@@ -149,12 +153,16 @@ const ReservationDetails: React.FC = () => {
                 <tr>
                   <td className="border px-4 py-2 font-medium">Id Image</td>
                   <td className="border px-4 py-2">
+                  {booking.userCredentials.idPhoto ? (
                     <img
-                      src={booking.userCredentials.idPhoto || '#'}
+                      src={booking.userCredentials.idPhoto}
                       alt="ID Document"
-                      style={{ cursor: 'pointer', width: '150px', height: '150px', border: '20px' }}
+                      className="w-32 h-32 cursor-pointer border"
                       onClick={() => handleImageClick(booking.userCredentials.idPhoto || '')}
                     />
+                  ) : (
+                    'No ID Photo'
+                  )}
                   </td>
                 </tr>
                 

@@ -55,6 +55,10 @@ const BookingSchema = new Schema(
       required: true,
       min: 0,
     },
+    revenueDistribution: {
+      admin: Number, 
+      manager: Number 
+    },
     userCredentials: {
       name: {
         type: String,
@@ -74,7 +78,7 @@ const BookingSchema = new Schema(
         required: true,
       },
       idPhoto: {
-        type: String,
+        type:  [String],
         required: true,
       },
     },

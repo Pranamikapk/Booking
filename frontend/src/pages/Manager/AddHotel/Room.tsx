@@ -11,11 +11,11 @@ interface RoomProps {
         }
     }
     handleChange: (data: {rooms: { guests?: number; bedrooms?: number; bathrooms?: number; diningrooms?: number; livingrooms?: number; }}) => void;
-    nextStep: () => void;
-    prevStep: () => void;
+    errors: Record<string, string>;
+
 }
 
-const Room: React.FC<RoomProps> = ({ formData, handleChange, nextStep, prevStep }) => {
+const Room: React.FC<RoomProps> = ({ formData, handleChange, errors }) => {
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         const validValue = Math.max(0, parseInt(value) || 0); 
@@ -104,6 +104,9 @@ const Room: React.FC<RoomProps> = ({ formData, handleChange, nextStep, prevStep 
                     />
                 </div>
             </div>
+            {errors.rooms && (
+                <p className="text-red-500 text-sm mt-2">{errors.rooms}</p>
+            )}
         </div>
     );
 };

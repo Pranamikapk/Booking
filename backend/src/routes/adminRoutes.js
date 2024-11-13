@@ -1,6 +1,7 @@
 import express from "express";
 import { adminAuth } from "../../src/middleware/authMiddleware.js";
 import adminController from "../controller/adminController.js";
+import { getAdminTransactions } from "../controller/transactionController.js";
 
 const adminRouter = express.Router();
 
@@ -12,5 +13,7 @@ adminRouter.get("/managers", adminController.listManager);
 adminRouter.get("/hotels", adminController.listHotels);
 adminRouter.post("/approve/:hotelId", adminAuth, adminController.approveHotel);
 adminRouter.post("/list/:hotelId", adminAuth, adminController.listUnlistHotel);
+
+adminRouter.get("/transactions",  getAdminTransactions)
 
 export default adminRouter;

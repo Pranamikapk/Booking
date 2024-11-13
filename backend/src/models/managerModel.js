@@ -28,16 +28,19 @@ const managerSchema = new Schema(
       type: String,
       required: false,
     },
+    hotels: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Hotel",
+        required: true,
+      },
+    ],
     token: {
       type: String,
     },
-    walletBalance: {
+    wallet: {
       type : Number,
       default: 0
-    },
-    hotelId: {
-      type: Schema.Types.ObjectId,
-      ref: 'Hotel'
     },
     isBlocked: {
       type: Boolean,

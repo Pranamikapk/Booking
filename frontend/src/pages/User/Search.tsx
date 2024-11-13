@@ -16,8 +16,9 @@ const Search: React.FC = () => {
   const [states, setStates] = useState<string[]>([])
 
   useEffect(() => {
-    dispatch(fetchHotels())
-  }, [dispatch])
+    if (filters.checkInDate) {
+      dispatch(fetchHotels({ checkInDate: filters.checkInDate }));
+    }  }, [dispatch, filters.checkInDate])
 
   useEffect(() => {
     if (hotels.length > 0) {

@@ -11,6 +11,7 @@ import {
   updateHotel,
 } from "../controller/hotelController.js";
 import managerController from "../controller/managerController.js";
+import { getManagerTransactions } from "../controller/transactionController.js";
 import userController from "../controller/userController.js";
 import { managerAuth, protect } from "../middleware/authMiddleware.js";
 
@@ -65,4 +66,5 @@ managerRouter.get("/reservations/:bookingId",managerAuth,bookingDetails)
 managerRouter.post("/cancel/:bookingId/approve",cancelApprove)
 managerRouter.post("/cancel/:bookingId/reject",cancelReject)
 
+managerRouter.get("/transactions", managerAuth ,getManagerTransactions)
 export default managerRouter;

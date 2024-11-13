@@ -16,11 +16,11 @@ interface PhotoProps {
         photos: string[]
     }
     handleChange: (data: { photos: string[]; name: string; description: string }) => void
-    nextStep: () => void
-    prevStep: () => void
+    errors: Record<string, string>;
+
 }
 
-const Photo: React.FC<PhotoProps> = ({ formData, handleChange, nextStep, prevStep }) => {
+const Photo: React.FC<PhotoProps> = ({ formData, handleChange, errors }) => {
     const [photo, setPhoto] = useState<string[]>(formData?.photos || [])
     const [hotelName, setHotelName] = useState<string>(formData?.name || '')
     const [description, setDescription] = useState<string>(formData?.description || '')
@@ -297,6 +297,9 @@ const Photo: React.FC<PhotoProps> = ({ formData, handleChange, nextStep, prevSte
             </div>
             {loading && (
                 <Spinner/>
+            )}
+            {errors.photo && (
+                <p className="text-red-500 text-sm mt-2">{errors.placeType}</p>
             )}
         </div>
     )

@@ -64,6 +64,9 @@ const SideBar : React.FC = () => {
           <li className="px-6 py-6 text-gray-700 hover:bg-gray-200">
             <Link to="/admin/hotels">Hotels</Link>
           </li>
+          <li className="px-6 py-6 text-gray-700 hover:bg-gray-200">
+            <Link to="/admin/transactions">Transactions</Link>
+          </li>
         </ul>
       </nav>
       <div className="px-6 py-4 mt-auto">

@@ -9,7 +9,7 @@ import Button from '../../components/ui/Button';
 import Modal from '../../components/ui/Modal';
 import { Booking } from '../../types/bookingTypes';
 
-const API_URL = 'http://localhost:3000/'; // Replace with your actual API URL
+const API_URL = 'http://localhost:3000/'; 
 
 export default function BookingDetails() {
   const { bookingId } = useParams<{ bookingId: string }>();
@@ -218,7 +218,7 @@ export default function BookingDetails() {
           <h3 className="text-xl font-semibold mb-2">Hotel Description</h3>
           <p className="text-gray-700">{booking.hotel.description}</p>
         </div>
-        <div className="px-6 py-4">
+        {/* <div className="px-6 py-4">
           {booking.cancellationRequest ? (
             <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4" role="alert">
               <p className="font-bold">Cancellation Request Status: {booking.cancellationRequest.status}</p>
@@ -233,7 +233,7 @@ export default function BookingDetails() {
               {booking.status === 'cancellation_pending' ? 'Cancellation Pending' : 'Cancel Booking'}
             </Button>
           )}
-        </div>
+        </div> */}
       </div>
 
       <Modal

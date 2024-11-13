@@ -250,8 +250,9 @@ export default function Order() {
               guests={guests}
               paymentOption={paymentOption}
             />
-            <Button onClick={handleConfirmPayment} className="w-full">Confirm and Pay</Button>
           </div>
+          <Button onClick={handleConfirmPayment} className="w-full">Confirm and Pay</Button>
+
         </div>
       </div>
     </div>

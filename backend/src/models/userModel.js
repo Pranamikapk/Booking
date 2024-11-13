@@ -28,7 +28,7 @@ const userSchema = new Schema(
       enum: ["client","manager", "admin"],
       default: "client",
     },
-    walletBalance: {
+    wallet: {
       type: Number,
       min: 0
     },

@@ -21,11 +21,11 @@ interface AmenitiesProps {
         amenities: string[];
     };
     handleChange: (data: { amenities: string[] }) => void;
-    nextStep: () => void;
-    prevStep: () => void;
+    errors: Record<string, string>;
+
 }
 
-const Amenities: React.FC<AmenitiesProps> = ({ formData, handleChange, nextStep, prevStep }) => {
+const Amenities: React.FC<AmenitiesProps> = ({ formData, handleChange, errors }) => {
     const [selectedAmenities, setSelectedAmenities] = useState<string[]>(formData.amenities || []);
 
     const toggleAmenity = (amenity: string) => {
@@ -77,6 +77,9 @@ const Amenities: React.FC<AmenitiesProps> = ({ formData, handleChange, nextStep,
                     ))}
                 </div>
             </div>
+            {errors.amenities && (
+                <p className="text-red-500 text-sm mt-2">{errors.amenities}</p>
+            )}
         </div>
     );
 };

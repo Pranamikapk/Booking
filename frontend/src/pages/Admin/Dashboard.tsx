@@ -11,7 +11,6 @@ function Dashboard(){
         <section>
           <h2 className="text-2xl font-semibold mb-4">Overview</h2>
           <div className="grid grid-cols-3 gap-4">
-            {/* Cards or components for displaying statistics */}
             <div className="bg-white shadow-md p-4 rounded">
               <h3 className="text-xl font-bold">Total Users</h3>
               <p className="text-2xl">1,200</p>
@@ -28,7 +27,6 @@ function Dashboard(){
         </section>
         <section className="mt-6">
           <h2 className="text-2xl font-semibold mb-4">Recent Activity</h2>
-          {/* Table or list for recent activity */}
           <table className="min-w-full bg-white border border-gray-300">
             <thead>
               <tr className="bg-gray-100">
@@ -48,7 +46,6 @@ function Dashboard(){
                 <td className="border px-4 py-2">2024-10-06</td>
                 <td className="border px-4 py-2">Jane Smith</td>
               </tr>
-              {/* Add more rows as needed */}
             </tbody>
           </table>
         </section>

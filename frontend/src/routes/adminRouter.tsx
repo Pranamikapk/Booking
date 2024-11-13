@@ -7,6 +7,7 @@ import Dashboard from "../pages/Admin/Dashboard"
 import HotelDetails from "../pages/Admin/HotelDetails"
 import HotelList from "../pages/Admin/HotelList"
 import ManagerList from "../pages/Admin/ManagerList"
+import Transactions from "../pages/Admin/Transactions"
 import UserList from "../pages/Admin/UserList"
 
 const AdminRouter = () => {
@@ -21,7 +22,7 @@ const AdminRouter = () => {
             <Route path='/admin/managers' element={admin ?  <ManagerList/> : <Navigate to = "/admin/login"/> } />
             <Route path='/admin/hotels' element={admin ?  <HotelList/> : <Navigate to = "/admin/login"/> } />
             <Route path='/admin/hotel/:hotelId' element={admin ?  <HotelDetails/> : <Navigate to = "/admin/login"/> } />
-
+            <Route path='/admin/transactions' element={admin ?  <Transactions/> : <Navigate to = "/admin/login"/> } />
           </Route>
         </Routes>
       </BrowserRouter>

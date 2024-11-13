@@ -46,7 +46,7 @@ const PlaceType: React.FC<PlaceTypeProps> = ({ formData, handleChange, errors })
                             />
                             <h3 className="font-semibold text-center mb-2">{type}</h3>
                             <Button
-                                variant={formData.placeType === type ? "default" : "outline"}
+                                variant={formData.placeType === type ? "primary" : "secondary"}
                                 className="w-full"
                                 onClick={() => handleClick(type)}
                             >

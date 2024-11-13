@@ -5,10 +5,10 @@ interface PriceProps {
         price: number | null;
     };
     handleChange: (data: { price: number | null }) => void;
-    prevStep: () => void;
+    errors: Record<string, string>;
 }
 
-const Price: React.FC<PriceProps> = ({ formData, handleChange, prevStep }) => {
+const Price: React.FC<PriceProps> = ({ formData, handleChange, errors }) => {
     const [price, setPrice] = useState<number | null>(formData?.price || null);
 
     const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,6 +35,9 @@ const Price: React.FC<PriceProps> = ({ formData, handleChange, prevStep }) => {
                     min="0"
                 />
             </div>
+            {errors.price && (
+                <p className="text-red-500 text-sm mt-2">{errors.price}</p>
+            )}
         </div>
     );
 };

@@ -5,7 +5,9 @@ import { v4 as uuidv4 } from 'uuid';
 import Booking from '../models/bookingModel.js';
 import CancellationModel from '../models/cancellationModel.js';
 import Manager from '../models/managerModel.js';
+import User from '../models/userModel.js';
 
+const ADMIN_COMMISSION_PERCENTAGE = 20;
 
 const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
@@ -22,7 +24,6 @@ export async function createBooking(req, res) {
             totalPrice,
             idType,
             idPhoto,
-            idPhotoBack,
             paymentOption
         } = req.body;
 
@@ -43,13 +44,12 @@ export async function createBooking(req, res) {
         }
 
         const totalDays = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
-
         if (isNaN(totalDays) || totalDays <= 0) {
             return res.status(400).json({ message: 'Invalid date range' });
         }
 
-        if (!idPhoto) {
-            return res.status(400).json({ message: 'ID photo is required' });
+        if (!idPhoto || idPhoto.length < 1 || (idType === 'Aadhar' && idPhoto.length < 2)) {
+            return res.status(400).json({ message: 'Both front and back ID photos are required for Aadhar ID' });
         }
 
         const userCredentials = {
@@ -57,12 +57,14 @@ export async function createBooking(req, res) {
             email,
             phone,
             idType: idType || 'Aadhar',
-            idPhoto,
-            idPhotoBack
+            idPhoto  
         };
 
         const amountPaid = paymentOption === 'partial' ? totalPrice * 0.2 : totalPrice;
         const remainingAmount = totalPrice - amountPaid;
+
+        const adminShare = (amountPaid * ADMIN_COMMISSION_PERCENTAGE) / 100;
+        const managerShare = amountPaid - adminShare;
 
         const newBooking = new Booking({
             user: userId,
@@ -76,11 +78,14 @@ export async function createBooking(req, res) {
             status: 'pending',
             userCredentials,
             amountPaid, 
-            remainingAmount
+            remainingAmount,
+            revenueDistribution: {
+                admin: adminShare,
+                manager: managerShare
+            }
         });
 
         const savedBooking = await newBooking.save();
-
 
         const options = {
             amount: amountPaid * 100,
@@ -100,7 +105,10 @@ export async function createBooking(req, res) {
         console.error('Error creating booking:', error);
         res.status(500).json({ message: 'Error creating booking', error: error.message });
     }
-}   
+}
+
+
+
 
 export async function verifyPayment(req, res) {
     try {
@@ -122,6 +130,24 @@ export async function verifyPayment(req, res) {
                     paymentDate: new Date(),
                 },
                 { new: true }
+            ).populate({
+                path: 'hotel',
+                select: 'manager',  
+            });
+
+            if (!updatedBooking.hotel || !updatedBooking.hotel.manager) {
+                return res.status(404).json({ message: 'Hotel or manager not found for this booking' });
+            }
+
+            await User.findByIdAndUpdate(
+                process.env.ADMIN_ID,
+                { $inc: { wallet: updatedBooking.revenueDistribution.admin } }
+            );
+            console.log(updatedBooking.hotel.manager);
+            
+            await Manager.findByIdAndUpdate(
+                updatedBooking.hotel.manager, 
+                { $inc: { wallet: updatedBooking.revenueDistribution.manager } }
             );
 
             res.status(200).json({
@@ -180,18 +206,20 @@ export async function listReservations(req, res) {
     
     try {
         const managerId = req.user.id;
+        console.log(managerId);
+        
         const manager = await Manager.findById(managerId);        
         if (!manager) {
             console.error("Manager not found with ID:", managerId);
             return res.status(404).json({ message: 'Manager not found' });
         }
 
-        if (!manager.hotelId) {
+        if (!manager.hotels || manager.hotels.length === 0) {
             console.error("Manager has no associated hotel");
             return res.status(400).json({ message: 'Manager has no associated hotel' });
         }
         
-        const reservations = await Booking.find({ hotel: manager.hotelId })
+        const reservations = await Booking.find({ hotel: { $in: manager.hotels } })
             .populate('user', 'name email phone')
             .populate('hotel', 'name address propertyType placeType ')
             .sort({ checkInDate: 1 });
