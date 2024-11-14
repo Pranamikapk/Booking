@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import asyncHandler from "express-async-handler";
 import jwt from "jsonwebtoken";
 import Hotel from "../models/hotelModel.js";
+import Manager from "../models/managerModel.js";
 import User from "../models/userModel.js";
 
 const registerAdmin = asyncHandler(async (req, res) => {
@@ -81,7 +82,7 @@ const listUser = asyncHandler(async (req, res) => {
 
 const listManager = asyncHandler(async (req, res) => {
   try {
-    const users = await User.find({ role: "manager" });
+    const users = await Manager.find();
     if (users) {
       res.status(200).json(users);
     } else {

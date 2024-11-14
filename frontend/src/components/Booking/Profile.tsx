@@ -109,7 +109,7 @@ const ProfileSection = () => {
             </>
           )}
 
-          <div className="flex items-center mt-4">
+          {/* <div className="flex items-center mt-4">
             <input
               type="checkbox"
               id="isBookingForSomeoneElse"
@@ -120,7 +120,7 @@ const ProfileSection = () => {
             <label htmlFor="isBookingForSomeoneElse" className="text-sm font-medium text-gray-700">
               Booking for someone else
             </label>
-          </div>
+          </div> */}
 
           {renderOtherPersonDetails()}
 

@@ -190,9 +190,9 @@ const ManagerLogin: React.FC = () => {
       <div className='bg-white shadow-lg rounded-lg overflow-hidden w-full max-w-md'>
         <div className="p-6 space-y-6">
         <div className="flex justify-center items-center mb-6">
-          <Link to={'/'} className="flex flex-col items-center">
-            <img src='/images/AddHotel/Untitled design.png' alt="Logo" className="w-24 h-24 rounded-full" /> 
-          </Link>
+        <Link to="/" className="flex flex-col items-center">
+          <img src="/images/AddHotel/SE3.png" alt="Logo" className="w-28 h-20 rounded-full" />
+        </Link>
         </div>
           <h1 className='text-4xl text-center mb-4'>Manager Login</h1>
           <form className='space-y-6' onSubmit={onSubmit}>

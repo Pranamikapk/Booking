@@ -1,5 +1,3 @@
-'use client'
-
 import { Trash } from 'lucide-react'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import ReactCrop, { Crop, PixelCrop } from 'react-image-crop'

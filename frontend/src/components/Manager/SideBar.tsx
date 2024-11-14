@@ -31,9 +31,9 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, toggleSidebar }) => {
       >
         <div className="flex items-center justify-between p-4 border-b">
         <div className="flex justify-center items-center mx-20">
-          <Link to={'/'} className="flex flex-col items-center">
-            <img src='/images/AddHotel/Untitled design.png' alt="Logo" className="w-16 h-18 rounded-full" /> 
-          </Link>
+          <Link to="/" className="flex flex-col items-center">
+          <img src="/images/AddHotel/SE3.png" alt="Logo" className="w-28 h-12 rounded-full" />
+        </Link>
         </div>              
         <button
             onClick={toggleSidebar}

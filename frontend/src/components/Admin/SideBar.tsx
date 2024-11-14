@@ -46,8 +46,8 @@ const SideBar : React.FC = () => {
       </button>
     <aside className="w-64 bg-white h-screen shadow-md fixed flex flex-col">
         <div className="flex justify-center items-center mt-5">
-          <Link to={'/'} className="flex flex-col items-center">
-            <img src='/images/AddHotel/Untitled design.png' alt="Logo" className="w-16 h-18 rounded-full" /> 
+            <Link to="/" className="flex flex-col items-center">
+            <img src="/images/AddHotel/SE3.png" alt="Logo" className="w-26 h-16 rounded-full" />
           </Link>
         </div>          
         <nav className="mt-10 flex-grow">
